@@ -1,0 +1,55 @@
+
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Configurações</h1>
+    <p class="text-gray-500 mt-2 text-base sm:text-lg">Gerencie as informações da sua empresa.</p>
+  </div>
+
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow p-6 sm:p-8">
+      <form #form="ngForm" (ngSubmit)="saveSettings()" class="space-y-6">
+        <div>
+          <label for="companyName" class="block text-sm font-medium text-gray-700">Nome do Negócio</label>
+          <input type="text" id="companyName" name="companyName" [(ngModel)]="companyProfile().name" required class="mt-1 input-field">
+        </div>
+        <div>
+          <label for="companyType" class="block text-sm font-medium text-gray-700">Perfil da Empresa</label>
+          <select id="companyType" name="companyType" [(ngModel)]="companyProfile().type" class="mt-1 input-field">
+            @for (type of companyTypes; track type.id) {
+              <option [value]="type.id">{{ type.name }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label for="monthlyRevenue" class="block text-sm font-medium text-gray-700">Faturamento Médio Mensal (R$)</label>
+          <input type="number" id="monthlyRevenue" name="monthlyRevenue" [(ngModel)]="companyProfile().monthlyRevenue" required class="mt-1 input-field">
+        </div>
+
+        <div class="pt-4 flex justify-end">
+           <button type="submit" [disabled]="form.invalid" class="px-8 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md hover:bg-primary-700 disabled:bg-gray-300 transform hover:-translate-y-0.5 transition-all">
+             Salvar Alterações
+           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</main>
+<style>
+  .input-field {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  .input-field:focus {
+    outline: none;
+    --tw-ring-color: rgb(47 212 124 / 0.2);
+    box-shadow: 0 0 0 4px var(--tw-ring-color);
+    border-color: #2fd47c;
+  }
+</style>

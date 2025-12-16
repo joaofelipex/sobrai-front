@@ -1,0 +1,81 @@
+
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Seja bem-vindo, {{ companyName() }}!</h1>
+    <p class="text-gray-500 mt-2 text-base sm:text-lg">Aqui está o resumo da saúde financeira do seu negócio.</p>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for (metric of metrics(); track metric.title) {
+      <app-metric-card [metric]="metric" [link]="metric.link"></app-metric-card>
+    } @empty {
+      @for (i of [1,2,3,4]; track i) {
+        <div class="h-40 bg-white rounded-xl animate-pulse"></div>
+      }
+    }
+  </div>
+
+  <!-- Goal Progress Section -->
+  @if (revenueGoal(); as goal) {
+    <div class="mb-8">
+       <app-goal-progress-card [goal]="goal" [currentAmount]="totalRevenueForGoal()"></app-goal-progress-card>
+    </div>
+  }
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- AI Insights Section -->
+    <div class="lg:col-span-2">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-5">Insights da nossa IA</h2>
+      @if (isLoadingInsights()) {
+        <div class="flex justify-center items-center p-12 bg-white rounded-xl border border-dashed border-gray-300">
+          <app-loading-spinner text="Analisando seus dados e buscando as melhores dicas..."></app-loading-spinner>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for (insight of insights(); track insight.title) {
+            <app-ai-insight-card [insight]="insight"></app-ai-insight-card>
+          } @empty {
+            <div class="col-span-full text-center py-12 bg-white rounded-xl">
+              <p class="text-gray-500">Nenhuma dica disponível no momento.</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="lg:col-span-1">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-5">Atividade Recente</h2>
+      <div class="bg-white rounded-xl shadow p-6 space-y-4">
+        @if (recentTransactions().length > 0) {
+          @for (transaction of recentTransactions(); track transaction.id) {
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center" [class.bg-green-100]="transaction.type === 'revenue'" [class.bg-red-100]="transaction.type === 'expense'">
+                @if (transaction.type === 'revenue') {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                }
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">{{ transaction.description }}</p>
+                <p class="text-sm text-gray-500">{{ transaction.date | date:'dd MMM' }}</p>
+              </div>
+              <div class="font-semibold" [class.text-green-600]="transaction.type === 'revenue'" [class.text-red-600]="transaction.type === 'expense'">
+                {{ (transaction.type === 'expense' ? '-' : '+') + transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="text-center py-8">
+            <p class="text-gray-500">Nenhuma transação registrada ainda.</p>
+            <a routerLink="/financeiro" class="text-sm text-primary-600 hover:underline font-semibold mt-2 inline-block">Adicionar transação</a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,16 @@
+
+<div class="relative min-h-screen md:flex">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Content Area -->
+  <div class="flex-1">
+    <!-- Mobile Header -->
+    <app-header></app-header>
+    
+    <main class="overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+<app-toast></app-toast>

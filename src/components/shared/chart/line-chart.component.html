@@ -1,0 +1,25 @@
+
+@if(data().length > 1) {
+<div class="w-full">
+    <svg [attr.viewBox]="'0 -5 300 180'" class="w-full h-auto">
+      @for(path of points().paths; track path.name) {
+         <path [attr.d]="path.d" [attr.stroke]="path.stroke" fill="none" stroke-width="2" />
+      }
+      @for(label of points().labels; track label.name) {
+          <text [attr.x]="label.x" [attr.y]="label.y" font-size="10" text-anchor="middle" fill="#6b7280">{{ label.name }}</text>
+      }
+    </svg>
+    <div class="flex items-center justify-center space-x-4 mt-4 text-sm">
+        @for(key of keys(); track key) {
+            <div class="flex items-center">
+                <span class="w-3 h-3 rounded-full mr-2" [style.background-color]="colors[key] || '#6b7280'"></span>
+                <span class="text-gray-600">{{key}}</span>
+            </div>
+        }
+    </div>
+</div>
+} @else {
+  <div class="w-full h-64 flex items-center justify-center text-gray-400">
+    Dados insuficientes para exibir o gráfico.
+  </div>
+}
