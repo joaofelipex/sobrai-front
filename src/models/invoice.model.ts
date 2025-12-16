@@ -1,8 +1,6 @@
-
 export interface Invoice {
   id: string;
-  clientName: string;
-  clientDocument: string; // CPF or CNPJ
+  clientId: string;
   description: string;
   amount: number;
   taxAmount: number;

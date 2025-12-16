@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +23,7 @@ export class GoalsComponent implements OnInit {
 
   goals = this.goalService.goals;
   totalRevenue = this.transactionService.totalRevenue;
+  balance = this.transactionService.balance;
   isModalOpen = signal(false);
   isLoading = signal(true);
 
@@ -74,13 +74,19 @@ export class GoalsComponent implements OnInit {
   }
 
   calculateCurrentAmount(goal: Goal): number {
-    return goal.type === 'revenue' ? this.totalRevenue() : 0;
+    if (goal.type === 'revenue') {
+      return this.totalRevenue();
+    }
+    // For savings goal, the current amount is the balance (revenue - expenses)
+    return this.balance();
   }
 
   calculateProgress(goal: Goal): number {
     const currentAmount = this.calculateCurrentAmount(goal);
     if (goal.targetAmount === 0) return 0;
-    return Math.min((currentAmount / goal.targetAmount) * 100, 100);
+    // For savings, progress can be negative, so we clamp it at 0.
+    const progress = (currentAmount / goal.targetAmount) * 100;
+    return Math.max(0, Math.min(progress, 100));
   }
 
   getDaysRemaining(deadline: string): number {

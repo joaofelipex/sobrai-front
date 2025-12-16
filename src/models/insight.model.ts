@@ -1,6 +1,8 @@
-
 export interface Insight {
   title: string;
   description: string;
-  icon: 'lightbulb' | 'trending-up' | 'shield' | 'zap' | 'award' | 'key' | 'wallet' | 'calendar' | string;
+  icon: string;
+  priority: 'Alta prioridade' | 'Média prioridade' | 'Baixa prioridade';
+  type: 'economy' | 'cashflow' | 'reminder';
+  estimatedImpact: string;
 }

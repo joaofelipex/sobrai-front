@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -25,20 +24,16 @@ export class SidebarComponent {
   isOpen = this.sidebarService.isOpen;
   
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
-  userInitials = computed(() => {
-    const name = this.userName().split(' ');
-    const first = name[0]?.[0] || '';
-    const last = name.length > 1 ? name[name.length - 1]?.[0] : '';
-    return `${first}${last}`.toUpperCase();
-  });
-
 
   navItems: NavItem[] = [
-    { path: '/dashboard', label: 'Dashboard', icon: 'home' },
+    { path: '/painel-principal', label: 'Painel Principal', icon: 'grid' },
+    { path: '/receitas-e-despesas', label: 'Receitas e Despesas', icon: 'receipt' },
+    { path: '/integracao-bancaria', label: 'Integração Bancária', icon: 'arrows-left-right' },
     { path: '/notas-fiscais', label: 'Notas Fiscais', icon: 'file-text' },
-    { path: '/financeiro', label: 'Financeiro', icon: 'dollar-sign' },
+    { path: '/analise-financeira', label: 'Análise Financeira', icon: 'bar-chart' },
+    { path: '/insights-ia', label: 'Insights da IA', icon: 'sparkles' },
     { path: '/relatorios', label: 'Relatórios', icon: 'bar-chart-2' },
-    { path: '/metas', label: 'Metas', icon: 'target' },
+    { path: '/assinatura', label: 'Assinatura', icon: 'credit-card' },
     { path: '/configuracoes', label: 'Configurações', icon: 'settings' },
   ];
 

@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnboardingComponent } from './components/onboarding/onboarding.component';
@@ -6,6 +5,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { OnboardingService } from './services/onboarding.service';
 import { TransactionService } from './services/transaction.service';
 import { GoalService } from './services/goal.service';
+import { RecurringTransactionService } from './services/recurring-transaction.service';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -24,12 +24,19 @@ export class AppComponent implements OnInit {
   onboardingService = inject(OnboardingService);
   transactionService = inject(TransactionService);
   goalService = inject(GoalService);
+  recurringTransactionService = inject(RecurringTransactionService);
   datePipe = inject(DatePipe);
 
   isOnboardingComplete = this.onboardingService.isOnboardingComplete;
 
   ngOnInit() {
     this.onboardingService.initialize();
+    
+    // Process recurring transactions before populating sample data
+    if (this.isOnboardingComplete()) {
+      this.recurringTransactionService.processDueTransactions();
+    }
+    
     this.populateWithSampleDataIfFirstRun();
   }
 

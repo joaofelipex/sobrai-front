@@ -1,9 +1,9 @@
-
 import { Injectable, signal, effect, inject, computed } from '@angular/core';
 import { Invoice } from '../models/invoice.model';
 import { OnboardingService } from './onboarding.service';
 import { TransactionService } from './transaction.service';
 import { ToastService } from './toast.service';
+import { ClientService } from './client.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,7 @@ export class InvoiceService {
   onboardingService = inject(OnboardingService);
   transactionService = inject(TransactionService);
   toastService = inject(ToastService);
+  clientService = inject(ClientService);
   
   totalTaxesIssued = computed(() => 
     this.invoices()
@@ -57,11 +58,14 @@ export class InvoiceService {
     };
 
     this.invoices.update(invoices => this.sortInvoices([...invoices, newInvoice]));
+    
+    const client = this.clientService.getClientById(newInvoice.clientId);
+    const clientName = client ? client.name : 'Cliente desconhecido';
 
     // Integration: Create a corresponding revenue transaction
     this.transactionService.addTransaction({
       type: 'revenue',
-      description: `Nota Fiscal: ${newInvoice.clientName}`,
+      description: `Nota Fiscal: ${clientName}`,
       amount: newInvoice.amount,
       date: newInvoice.issueDate,
       category: 'Prestação de Serviço',

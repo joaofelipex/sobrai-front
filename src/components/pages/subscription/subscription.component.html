@@ -1,0 +1,89 @@
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="mb-10">
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Gerenciar Assinatura</h1>
+    <p class="text-slate-500 mt-2 text-base sm:text-lg">Escolha o plano que melhor se adapta ao momento do seu negócio.</p>
+  </div>
+
+  <!-- Plans Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    @for(plan of plans(); track plan.id) {
+      <div class="relative bg-white/80 backdrop-blur-sm border rounded-xl shadow-sm p-8 flex flex-col transition-all duration-300 ease-out"
+           [class.border-primary-500]="currentPlanId() === plan.id"
+           [class.shadow-primary-500/20]="currentPlanId() === plan.id"
+           [class.shadow-lg]="currentPlanId() === plan.id"
+           [class.border-slate-200/60]="currentPlanId() !== plan.id">
+        
+        @if (currentPlanId() === plan.id) {
+          <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary-500 text-white text-xs font-semibold rounded-full shadow-md">
+            Plano Atual
+          </div>
+        }
+
+        <h3 class="text-2xl font-bold text-slate-800">{{ plan.name }}</h3>
+        <p class="mt-2 text-slate-500">
+          <span class="text-4xl font-extrabold text-slate-900">R$ {{ plan.price }}</span>
+          <span class="font-semibold">/mês</span>
+        </p>
+
+        <ul class="mt-6 space-y-3 text-slate-600 flex-1">
+          @for(feature of plan.features; track feature) {
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success-500 mr-3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>{{ feature }}</span>
+            </li>
+          }
+        </ul>
+
+        <button (click)="selectPlan(plan)" 
+                class="w-full mt-8 py-3 font-semibold rounded-lg transition-colors"
+                [disabled]="currentPlanId() === plan.id"
+                [class.bg-primary-600]="currentPlanId() !== plan.id"
+                [class.text-white]="currentPlanId() !== plan.id"
+                [class.hover:bg-primary-700]="currentPlanId() !== plan.id"
+                [class.shadow-md]="currentPlanId() !== plan.id"
+                [class.shadow-primary-500/30]="currentPlanId() !== plan.id"
+                [class.bg-slate-200]="currentPlanId() === plan.id"
+                [class.text-slate-600]="currentPlanId() === plan.id"
+                [class.cursor-default]="currentPlanId() === plan.id">
+          {{ currentPlanId() === plan.id ? 'Seu Plano Atual' : 'Mudar para este plano' }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Billing History -->
+  <div>
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-800 mb-5">Histórico de Faturamento</h2>
+    <div class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-slate-500">
+          <thead class="text-xs text-slate-700 uppercase bg-slate-50/50">
+            <tr>
+              <th scope="col" class="px-6 py-4">Data</th>
+              <th scope="col" class="px-6 py-4">Plano</th>
+              <th scope="col" class="px-6 py-4 text-right">Valor</th>
+              <th scope="col" class="px-6 py-4 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(item of billingHistory(); track item.date) {
+              <tr class="bg-transparent border-b border-slate-200/80 last:border-b-0">
+                <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{{ item.date | date:'dd/MM/yyyy' }}</td>
+                <td class="px-6 py-4">{{ item.planName }}</td>
+                <td class="px-6 py-4 text-right font-semibold text-slate-800">{{ item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                        [class.bg-success-100]="item.status === 'paid'" [class.text-success-800]="item.status === 'paid'"
+                        [class.bg-red-100]="item.status === 'failed'" [class.text-red-800]="item.status === 'failed'">
+                    {{ item.status === 'paid' ? 'Pago' : 'Falhou' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
