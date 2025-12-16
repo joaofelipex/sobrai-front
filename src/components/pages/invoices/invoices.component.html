@@ -1,0 +1,140 @@
+
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Notas Fiscais</h1>
+      <p class="text-gray-500 mt-2 text-base sm:text-lg">Emita e gerencie suas notas fiscais de serviço.</p>
+    </div>
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md hover:bg-primary-700 transform hover:-translate-y-0.5 transition-all flex items-center justify-center space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      <span>Emitir NF-e</span>
+    </button>
+  </div>
+
+  <!-- Invoices List -->
+  <div class="bg-white rounded-xl shadow">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h3 class="text-xl font-semibold text-gray-800">Histórico de Emissões</h3>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
+          <button (click)="setFilter('all')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'all'" [class.text-gray-800]="filter() === 'all'" [class.text-gray-500]="filter() !== 'all'">Todas</button>
+          <button (click)="setFilter('issued')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'issued'" [class.text-gray-800]="filter() === 'issued'" [class.text-gray-500]="filter() !== 'issued'">Emitidas</button>
+          <button (click)="setFilter('paid')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'paid'" [class.text-gray-800]="filter() === 'paid'" [class.text-gray-500]="filter() !== 'paid'">Pagas</button>
+          <button (click)="setFilter('canceled')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'canceled'" [class.text-gray-800]="filter() === 'canceled'" [class.text-gray-500]="filter() !== 'canceled'">Canceladas</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+      @if (filteredInvoices().length > 0) {
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3">Cliente</th>
+              <th scope="col" class="px-6 py-3">Data</th>
+              <th scope="col" class="px-6 py-3">Status</th>
+              <th scope="col" class="px-6 py-3 text-right">Valor</th>
+              <th scope="col" class="px-6 py-3 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of filteredInvoices(); track invoice.id) {
+              <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ invoice.clientName }}</td>
+                <td class="px-6 py-4">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                    [class.bg-blue-100]="invoice.status === 'issued'" [class.text-blue-800]="invoice.status === 'issued'"
+                    [class.bg-green-100]="invoice.status === 'paid'" [class.text-green-800]="invoice.status === 'paid'"
+                    [class.bg-gray-100]="invoice.status === 'canceled'" [class.text-gray-700]="invoice.status === 'canceled'">
+                    {{ {issued: 'Emitida', paid: 'Paga', canceled: 'Cancelada'}[invoice.status] }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right font-semibold text-gray-800">
+                  {{ invoice.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                </td>
+                <td class="px-6 py-4 text-center space-x-2">
+                  @if(invoice.status === 'issued') {
+                    <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-primary-600 hover:underline">Marcar como Paga</button>
+                    <button (click)="updateStatus(invoice.id, 'canceled')" class="font-medium text-red-600 hover:underline">Cancelar</button>
+                  } @else {
+                    <span class="text-gray-400">-</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="text-center p-12">
+          <p class="text-gray-500">Nenhuma nota fiscal encontrada.</p>
+          <p class="text-gray-400 text-sm mt-1">Clique em "Emitir NF-e" para começar.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Add Invoice Modal -->
+  @if (isModalOpen()) {
+    <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-800">Emitir Nova Nota Fiscal</h3>
+        </div>
+        <form #form="ngForm" (ngSubmit)="saveInvoice()" class="p-6 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="clientName" class="block text-sm font-medium text-gray-700">Nome do Cliente</label>
+              <input type="text" id="clientName" name="clientName" [(ngModel)]="newInvoiceForm().clientName" required class="mt-1 input-field">
+            </div>
+            <div>
+              <label for="clientDocument" class="block text-sm font-medium text-gray-700">CPF/CNPJ do Cliente</label>
+              <input type="text" id="clientDocument" name="clientDocument" [(ngModel)]="newInvoiceForm().clientDocument" class="mt-1 input-field">
+            </div>
+          </div>
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
+            <textarea id="description" name="description" [(ngModel)]="newInvoiceForm().description" rows="3" required class="mt-1 input-field"></textarea>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="amount" class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+              <input type="number" id="amount" name="amount" [(ngModel)]="newInvoiceForm().amount" required min="0.01" step="0.01" class="mt-1 input-field">
+            </div>
+            <div>
+              <label for="issueDate" class="block text-sm font-medium text-gray-700">Data de Emissão</label>
+              <input type="date" id="issueDate" name="issueDate" [(ngModel)]="newInvoiceForm().issueDate" required class="mt-1 input-field">
+            </div>
+          </div>
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Cancelar</button>
+            <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 disabled:bg-gray-300">Emitir Nota</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</main>
+
+<style>
+  .input-field {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  .input-field:focus {
+    outline: none;
+    --tw-ring-color: rgb(47 212 124 / 0.2);
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-shadow: 0 0 #0000;
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    border-color: #2fd47c;
+    box-shadow: 0 0 0 4px var(--tw-ring-color);
+  }
+</style>

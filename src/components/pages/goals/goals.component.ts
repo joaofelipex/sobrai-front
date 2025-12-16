@@ -1,0 +1,94 @@
+
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Goal } from '../../../models/goal.model';
+import { GoalService } from '../../../services/goal.service';
+import { TransactionService } from '../../../services/transaction.service';
+import { ToastService } from '../../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
+
+@Component({
+  selector: 'app-goals',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
+  providers: [DatePipe],
+  templateUrl: './goals.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class GoalsComponent implements OnInit {
+  goalService = inject(GoalService);
+  transactionService = inject(TransactionService);
+  toastService = inject(ToastService);
+  datePipe = inject(DatePipe);
+
+  goals = this.goalService.goals;
+  totalRevenue = this.transactionService.totalRevenue;
+  isModalOpen = signal(false);
+  isLoading = signal(true);
+
+  newGoal = signal({
+    name: '',
+    type: 'revenue' as 'revenue' | 'savings',
+    targetAmount: 10000,
+    deadline: this.getTomorrowDateString(),
+  });
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 500);
+  }
+
+  openModal() {
+    this.isModalOpen.set(true);
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
+  }
+
+  addGoal() {
+    if (this.newGoal().name && this.newGoal().targetAmount > 0 && this.newGoal().deadline) {
+      this.goalService.addGoal(this.newGoal());
+      this.toastService.show('Meta criada com sucesso!');
+      this.resetNewGoal();
+      this.closeModal();
+    }
+  }
+
+  private getTomorrowDateString(): string {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return this.datePipe.transform(tomorrow, 'yyyy-MM-dd') || '';
+  }
+
+  private resetNewGoal() {
+    this.newGoal.set({
+      name: '',
+      type: 'revenue',
+      targetAmount: 10000,
+      deadline: this.getTomorrowDateString(),
+    });
+  }
+
+  calculateCurrentAmount(goal: Goal): number {
+    return goal.type === 'revenue' ? this.totalRevenue() : 0;
+  }
+
+  calculateProgress(goal: Goal): number {
+    const currentAmount = this.calculateCurrentAmount(goal);
+    if (goal.targetAmount === 0) return 0;
+    return Math.min((currentAmount / goal.targetAmount) * 100, 100);
+  }
+
+  getDaysRemaining(deadline: string): number {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const deadlineDate = new Date(deadline + 'T00:00:00');
+    const timeDiff = deadlineDate.getTime() - today.getTime();
+    const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return days < 0 ? 0 : days;
+  }
+}
