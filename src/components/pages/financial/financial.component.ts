@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -105,5 +104,9 @@ export class FinancialComponent implements OnInit {
 
   setFilter(filter: 'all' | 'revenue' | 'expense') {
     this.filter.set(filter);
+  }
+
+  setTransactionType(type: 'revenue' | 'expense') {
+    this.transactionForm.update(form => ({ ...form, type }));
   }
 }

@@ -1,17 +1,22 @@
-
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Metric } from '../../../models/metric.model';
+
+// FIX: Removed redundant and conflicting 'change' property. It is now inherited as optional from the base Metric interface.
+interface MetricWithStyle extends Metric {
+  bgColor: string;
+  iconColor: string;
+}
 
 @Component({
   selector: 'app-metric-card',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgClass],
   templateUrl: './metric-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MetricCardComponent {
-  metric = input.required<Metric>();
+  metric = input.required<MetricWithStyle>();
   link = input<any[] | null>(null);
 }
