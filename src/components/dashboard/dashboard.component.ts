@@ -10,12 +10,11 @@ import { GoalService } from '../../services/goal.service';
 import { CompanyProfile } from '../../models/company.model';
 import { Metric } from '../../models/metric.model';
 import { Insight } from '../../models/insight.model';
-// Temporariamente removidos para debug
-// import { MetricCardComponent } from '../shared/metric-card/metric-card.component';
-// import { AiInsightCardComponent } from '../shared/ai-insight-card/ai-insight-card.component';
-// import { WelcomeBannerComponent } from '../shared/welcome-banner/welcome-banner.component';
-// import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-progress-card.component';
-// import { LineChartComponent } from '../shared/chart/line-chart.component';
+import { MetricCardComponent } from '../shared/metric-card/metric-card.component';
+import { AiInsightCardComponent } from '../shared/ai-insight-card/ai-insight-card.component';
+import { WelcomeBannerComponent } from '../shared/welcome-banner/welcome-banner.component';
+import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-progress-card.component';
+import { LineChartComponent } from '../shared/chart/line-chart.component';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
 
@@ -28,7 +27,7 @@ interface MetricWithLink extends Metric {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MetricCardComponent, AiInsightCardComponent, WelcomeBannerComponent, GoalProgressCardComponent, LineChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -60,11 +59,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Métodos de ciclo de vida
   ngOnInit(): void {
-    console.log('🎯🎯🎯 DashboardComponent ngOnInit chamado!');
-    console.log('🎯🎯🎯 DashboardComponent está sendo inicializado!');
-    console.log('🎯🎯🎯 Se você vê isso no console, o componente está sendo criado!');
-    // Temporariamente desabilitado para debug
-    // this.initializeDashboard();
+    this.initializeDashboard();
   }
 
   ngOnDestroy(): void {
