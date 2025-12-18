@@ -14,13 +14,23 @@ export class OnboardingService {
   companyProfile = signal<CompanyProfile | null>(null);
 
   initialize() {
-    const isComplete = localStorage.getItem(this.storageKey) === 'true';
-    this.isOnboardingComplete.set(isComplete);
-    if (isComplete) {
-      const profileData = localStorage.getItem(this.companyProfileKey);
-      if (profileData) {
-        this.companyProfile.set(JSON.parse(profileData));
+    console.log('Inicializando OnboardingService...');
+    try {
+      const isComplete = localStorage.getItem(this.storageKey) === 'true';
+      console.log('Onboarding completo?', isComplete);
+      this.isOnboardingComplete.set(isComplete);
+      
+      if (isComplete) {
+        const profileData = localStorage.getItem(this.companyProfileKey);
+        console.log('Dados do perfil encontrados:', !!profileData);
+        if (profileData) {
+          const parsedProfile = JSON.parse(profileData);
+          console.log('Perfil carregado:', parsedProfile);
+          this.companyProfile.set(parsedProfile);
+        }
       }
+    } catch (error) {
+      console.error('Erro ao inicializar OnboardingService:', error);
     }
   }
 
