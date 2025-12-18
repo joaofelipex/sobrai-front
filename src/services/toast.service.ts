@@ -29,6 +29,14 @@ export class ToastService {
     console.log('ToastService: Serviço inicializado');
   }
 
+  showError(message: string, duration: number = 5000) {
+    return this.show(message, 'error', duration);
+  }
+
+  showSuccess(message: string, duration: number = 3000) {
+    return this.show(message, 'success', duration);
+  }
+
   show(message: string, type: ToastType = 'success', duration: number = 5000) {
     try {
       console.log(`ToastService: Exibindo notificação [${type}]: ${message}`);

@@ -100,9 +100,7 @@ export class AppComponent implements OnInit {
           name: `Faturamento de ${this.formatDate(new Date(), 'MMMM')}`,
           type: 'revenue',
           targetAmount: profile.monthlyRevenue * 1.2,
-          deadline: this.formatDate(this.getEndOfMonth()),
-          currentAmount: 0,
-          progress: 0
+          deadline: this.formatDate(this.getEndOfMonth())
         });
       }
 
