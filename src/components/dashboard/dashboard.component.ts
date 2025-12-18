@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { OnboardingService } from '../../services/onboarding.service';
 import { TransactionService } from '../../services/transaction.service';
 import { GeminiService } from '../../services/gemini.service';
@@ -68,8 +69,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Inicialização do dashboard
   private async initializeDashboard() {
+    console.log('Iniciando inicialização do dashboard...');
     try {
       this.hasError.set(false);
+      console.log('Carregando métricas e insights...');
       await Promise.all([
         this.loadMetrics(),
         this.loadInsights()
@@ -104,12 +107,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private async loadInsights() {
     try {
       this.isLoadingInsights.set(true);
-      // Get the required data for generating insights
-      const profile = await this.onboardingService.companyProfile().toPromise();
-      const transactions = await this.transactionService.transactions().toPromise();
       
-      if (profile && transactions) {
-        const insights = await this.geminiService.generateFinancialInsights(profile, transactions);
+      // Get the required data for generating insights
+      const profile = this.onboardingService.companyProfile;
+      const transactions = this.transactionService.transactions;
+      
+      if (profile() && transactions()) {
+        const insights = await this.geminiService.generateFinancialInsights(profile()!, transactions());
         this.insights.set(insights);
       } else {
         console.warn('Could not load profile or transactions for insights');
