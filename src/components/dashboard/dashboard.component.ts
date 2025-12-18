@@ -16,7 +16,7 @@ import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-pro
 import { LineChartComponent } from '../shared/chart/line-chart.component';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
-import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
+import { SkeletonLoaderComponent } from '../../shared/skeleton-loader/skeleton-loader.component';
 
 interface MetricWithLink extends Metric {
   link?: any[];
@@ -88,13 +88,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     try {
       this.isLoadingMetrics.set(true);
       
-      // Aguarda o carregamento dos dados necessários
-      await Promise.all([
-        this.transactionService.ensureDataLoaded(),
-        this.invoiceService.ensureDataLoaded(),
-        this.goalService.ensureDataLoaded()
-      ]);
-      
+      // As métricas são computadas automaticamente pelos signals
       // Força uma nova computação das métricas
       this.metrics();
       
