@@ -10,14 +10,14 @@ import { GoalService } from '../../services/goal.service';
 import { CompanyProfile } from '../../models/company.model';
 import { Metric } from '../../models/metric.model';
 import { Insight } from '../../models/insight.model';
-import { MetricCardComponent } from '../shared/metric-card/metric-card.component';
-import { AiInsightCardComponent } from '../shared/ai-insight-card/ai-insight-card.component';
-import { WelcomeBannerComponent } from '../shared/welcome-banner/welcome-banner.component';
-import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-progress-card.component';
-import { LineChartComponent } from '../shared/chart/line-chart.component';
+// Temporariamente removidos para debug
+// import { MetricCardComponent } from '../shared/metric-card/metric-card.component';
+// import { AiInsightCardComponent } from '../shared/ai-insight-card/ai-insight-card.component';
+// import { WelcomeBannerComponent } from '../shared/welcome-banner/welcome-banner.component';
+// import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-progress-card.component';
+// import { LineChartComponent } from '../shared/chart/line-chart.component';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
-import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 
 interface MetricWithLink extends Metric {
   link?: any[];
@@ -28,7 +28,7 @@ interface MetricWithLink extends Metric {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent, AiInsightCardComponent, WelcomeBannerComponent, GoalProgressCardComponent, LineChartComponent, SkeletonLoaderComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -60,7 +60,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Métodos de ciclo de vida
   ngOnInit(): void {
-    this.initializeDashboard();
+    console.log('🎯🎯🎯 DashboardComponent ngOnInit chamado!');
+    console.log('🎯🎯🎯 DashboardComponent está sendo inicializado!');
+    console.log('🎯🎯🎯 Se você vê isso no console, o componente está sendo criado!');
+    // Temporariamente desabilitado para debug
+    // this.initializeDashboard();
   }
 
   ngOnDestroy(): void {
@@ -90,6 +94,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private async loadMetrics() {
     try {
       this.isLoadingMetrics.set(true);
+      
+      // Pequeno delay para simular carregamento e garantir que a UI atualize
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // As métricas são computadas automaticamente pelos signals
       // Força uma nova computação das métricas
