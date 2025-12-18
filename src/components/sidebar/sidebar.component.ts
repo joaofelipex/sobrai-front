@@ -26,17 +26,17 @@ export class SidebarComponent {
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
 
   navItems: NavItem[] = [
-    { path: '/painel-principal', label: 'Painel Principal', icon: 'grid' },
-    { path: '/receitas-e-despesas', label: 'Receitas e Despesas', icon: 'receipt' },
-    { path: '/recorrencias', label: 'Recorrências', icon: 'repeat' },
-    { path: '/integracao-bancaria', label: 'Integração Bancária', icon: 'arrows-left-right' },
-    { path: '/notas-fiscais', label: 'Notas Fiscais', icon: 'file-text' },
-    { path: '/analise-financeira', label: 'Análise Financeira', icon: 'bar-chart' },
-    { path: '/insights-ia', label: 'Insights da IA', icon: 'sparkles' },
-    { path: '/metas', label: 'Metas', icon: 'target' },
-    { path: '/relatorios', label: 'Relatórios', icon: 'bar-chart-2' },
-    { path: '/assinatura', label: 'Assinatura', icon: 'credit-card' },
-    { path: '/configuracoes', label: 'Configurações', icon: 'settings' },
+    { path: 'painel-principal', label: 'Painel Principal', icon: 'grid' },
+    { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: 'receipt' },
+    { path: 'recorrencias', label: 'Recorrências', icon: 'repeat' },
+    { path: 'integracao-bancaria', label: 'Integração Bancária', icon: 'arrows-left-right' },
+    { path: 'notas-fiscais', label: 'Notas Fiscais', icon: 'file-text' },
+    { path: 'analise-financeira', label: 'Análise Financeira', icon: 'bar-chart' },
+    { path: 'insights-ia', label: 'Insights da IA', icon: 'sparkles' },
+    { path: 'metas', label: 'Metas', icon: 'target' },
+    { path: 'relatorios', label: 'Relatórios', icon: 'bar-chart-2' },
+    { path: 'assinatura', label: 'Assinatura', icon: 'credit-card' },
+    { path: 'configuracoes', label: 'Configurações', icon: 'settings' },
   ];
 
   closeSidebar() {
