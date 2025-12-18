@@ -104,12 +104,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private async loadInsights() {
     try {
       this.isLoadingInsights.set(true);
-      const insights = await this.geminiService.getFinancialInsights();
-      this.insights.set(insights);
+      // Get the required data for generating insights
+      const profile = await this.onboardingService.getCompanyProfile().toPromise();
+      const transactions = await this.transactionService.getTransactions().toPromise();
+      
+      if (profile && transactions) {
+        const insights = await this.geminiService.generateFinancialInsights(profile, transactions);
+        this.insights.set(insights);
+      } else {
+        console.warn('Could not load profile or transactions for insights');
+        this.insights.set([]);
+      }
     } catch (error) {
       console.error('Erro ao carregar insights:', error);
       this.insights.set([]); // Define como array vazio em caso de erro
-      throw error;
     } finally {
       this.isLoadingInsights.set(false);
     }
