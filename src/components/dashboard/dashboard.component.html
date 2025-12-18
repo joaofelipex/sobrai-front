@@ -1,30 +1,11 @@
-<main class="p-4 sm:p-6 lg:p-8 space-y-8">
-
-  <div class="animate-in" style="animation-delay: 0.1s;">
-    <app-welcome-banner [userName]="userName()" [companyName]="companyProfile()?.name || ''" />
-  </div>
-
-  <!-- Action Buttons -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in" style="animation-delay: 0.2s;">
-    <a routerLink="/notas-fiscais" class="px-6 py-3 bg-primary-600 text-white font-bold rounded-lg shadow-md shadow-primary-500/30 hover:bg-primary-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      <span>Emitir Nota Fiscal</span>
-    </a>
-    <a routerLink="/receitas-e-despesas" class="px-6 py-3 bg-white text-slate-700 font-bold rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 17V7"></path></svg>
-      <span>Adicionar Transação</span>
-    </a>
-     <a routerLink="/relatorios" class="px-6 py-3 bg-white text-slate-700 font-bold rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
-      <span>Ver Relatórios</span>
-    </a>
-  </div>
-
-  <!-- Metrics Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    @for (metric of metrics(); track metric.title; let i = $index) {
-      <div class="animate-in" [style.animation-delay.s]="0.3 + i * 0.05">
-        <app-metric-card [metric]="metric" [link]="metric.link"></app-metric-card>
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex justify-between items-center">
+        <div class="animate-fade-in">
+          <h1 class="text-2xl font-bold text-white">Painel de Controle</h1>
+          <p class="text-blue-100 mt-1">Bem-vindo de volta, {{userName()}}!</p>
       </div>
     } @empty {
       @for (i of [1,2,3,4]; track i) {
