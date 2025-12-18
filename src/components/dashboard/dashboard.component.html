@@ -10,7 +10,7 @@
         <div class="hidden md:flex items-center space-x-4">
           <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
             <p class="text-xs text-blue-200">Última atualização</p>
-            <p class="text-sm font-semibold text-white">{{getCurrentTime()}}</p>
+            <p class="text-sm font-semibold text-white">{{currentTime()}}</p>
           </div>
         </div>
       </div>
@@ -19,13 +19,6 @@
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 -mt-4">
-    <!-- Welcome Banner -->
-    @if (companyProfile(); as profile) {
-      <div class="mb-8 transform transition-all duration-300 hover:scale-[1.01]">
-        <app-welcome-banner [userName]="userName()" [companyName]="profile.name"></app-welcome-banner>
-      </div>
-    }
-
     <!-- Quick Actions -->
     <div class="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
       <a routerLink="receitas-e-despesas" 
@@ -134,8 +127,8 @@
             </a>
           </div>
           @if (balanceHistory() && balanceHistory().length > 0) {
-            <div class="transform transition-all duration-300">
-              <app-line-chart [data]="balanceHistory()" [chartColors]="chartColors"></app-line-chart>
+            <div class="h-64 flex items-center justify-center bg-slate-50 rounded-lg">
+              <p class="text-slate-500">Gráfico será implementado aqui</p>
             </div>
           } @else {
             <div class="text-center py-16">
@@ -156,13 +149,21 @@
 
         <!-- Goal Progress Section -->
         @if (revenueGoal(); as goal) {
-          <div class="transform transition-all duration-300 hover:scale-[1.01]">
-            <app-goal-progress-card [goal]="goal" [currentAmount]="totalRevenueForGoal()"></app-goal-progress-card>
+          <div class="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">{{goal.name}}</h3>
+            <div class="w-full bg-slate-200 rounded-full h-4 mb-2">
+              <div class="bg-blue-600 h-4 rounded-full transition-all" 
+                   [style.width.%]="Math.min((totalRevenueForGoal() / goal.targetAmount * 100), 100)">
+              </div>
+            </div>
+            <p class="text-sm text-slate-600">
+              {{formatCurrency(totalRevenueForGoal())}} de {{formatCurrency(goal.targetAmount)}}
+            </p>
           </div>
         }
       </div>
 
-      <!-- Right Column (AI Insights) -->
+      <!-- Right Column -->
       <div class="space-y-6">
         <div class="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
           <div class="flex items-center justify-between mb-4">
@@ -187,35 +188,19 @@
           </div>
         </div>
         
-        @if (isLoadingInsights()) {
-          @for (i of [1,2,3]; track i) {
-            <div class="bg-white border border-slate-200 rounded-xl p-6 animate-pulse">
-              <div class="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
-              <div class="h-3 bg-slate-200 rounded w-full mb-2"></div>
-              <div class="h-3 bg-slate-200 rounded w-5/6"></div>
-            </div>
-          }
-        } @else {
-          @for (insight of insights(); track insight.title) {
-            <div class="transform transition-all duration-300 hover:scale-[1.02]">
-              <app-ai-insight-card [insight]="insight"></app-ai-insight-card>
-            </div>
-          } @empty {
-            <div class="text-center py-12 bg-white rounded-xl border border-slate-200 shadow-sm">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary-50 to-primary-100 mb-4">
-                <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                </svg>
-              </div>
-              <p class="text-slate-600 font-medium">Nenhuma dica disponível</p>
-              <p class="text-slate-400 text-sm mt-1">Insights serão gerados automaticamente</p>
-              <a routerLink="insights-ia" 
-                 class="inline-block mt-4 text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors">
-                Ver todos os insights →
-              </a>
-            </div>
-          }
-        }
+        <div class="text-center py-12 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary-50 to-primary-100 mb-4">
+            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <p class="text-slate-600 font-medium">Insights da IA</p>
+          <p class="text-slate-400 text-sm mt-1">Acesse a página de insights para ver análises detalhadas</p>
+          <a routerLink="insights-ia" 
+             class="inline-block mt-4 text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors">
+            Ver todos os insights →
+          </a>
+        </div>
       </div>
     </div>
   </div>
