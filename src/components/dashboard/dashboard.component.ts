@@ -16,7 +16,7 @@ import { GoalProgressCardComponent } from '../shared/goal-progress-card/goal-pro
 import { LineChartComponent } from '../shared/chart/line-chart.component';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
-import { SkeletonLoaderComponent } from '../../shared/skeleton-loader/skeleton-loader.component';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 
 interface MetricWithLink extends Metric {
   link?: any[];
