@@ -12,7 +12,7 @@
   </div>
 
   <!-- Recurring List -->
-  <div class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl shadow-sm">
+  <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm">
     <div class="p-6 border-b border-slate-200/80">
       <h3 class="text-xl font-semibold text-slate-800">Lançamentos Recorrentes</h3>
     </div>
@@ -20,7 +20,7 @@
     @if (recurringService.recurringTransactions().length > 0) {
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left text-slate-500">
-          <thead class="text-xs text-slate-700 uppercase bg-slate-50/50">
+          <thead class="text-xs text-slate-700 uppercase bg-slate-50">
             <tr>
               <th scope="col" class="px-6 py-4">Descrição</th>
               <th scope="col" class="px-6 py-4">Categoria</th>
@@ -32,7 +32,7 @@
           </thead>
           <tbody>
             @for (item of recurringService.recurringTransactions(); track item.id) {
-              <tr class="bg-transparent border-b border-slate-200/80 last:border-b-0 hover:bg-slate-50/50">
+              <tr class="bg-white border-b border-slate-200/80 last:border-b-0 hover:bg-slate-50/50">
                 <td class="px-6 py-4 font-medium text-slate-900">{{ item.description }}</td>
                 <td class="px-6 py-4">{{ item.category }}</td>
                 <td class="px-6 py-4 text-right font-semibold" [class.text-success-600]="item.type === 'revenue'" [class.text-red-600]="item.type === 'expense'">
@@ -70,8 +70,8 @@
 
   <!-- Modal -->
   @if (isModalOpen()) {
-    <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" (click)="closeModal()">
-      <div class="bg-white/80 backdrop-blur-lg border border-slate-200/60 rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">
+    <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">
         <form #formEl="ngForm" (ngSubmit)="save()">
           <div class="p-6 border-b border-slate-200/80">
             <h3 class="text-xl font-semibold text-slate-800">{{ editingTransactionId() ? 'Editar' : 'Nova' }} Recorrência</h3>
@@ -123,5 +123,5 @@
 
 <style>
   .input-field { display: block; width: 100%; padding: 0.5rem 0.75rem; background-color: white; border: 1px solid #d1d5db; border-radius: 0.5rem; }
-  .input-field:focus { outline: none; --tw-ring-color: rgb(14 165 233 / 0.2); box-shadow: 0 0 0 4px var(--tw-ring-color); border-color: #0ea5e9; }
+  .input-field:focus { outline: none; --tw-ring-color: rgb(99 102 241 / 0.2); box-shadow: 0 0 0 4px var(--tw-ring-color); border-color: #6366f1; }
 </style>

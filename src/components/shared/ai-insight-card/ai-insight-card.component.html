@@ -1,12 +1,10 @@
 @if (insight(); as i) {
-<div class="bg-white border-l-4 rounded-xl shadow-sm p-5 flex flex-col justify-between h-full"
+<a routerLink="/insights-ia" class="block group transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-1">
+<div class="bg-white border-l-4 rounded-r-lg shadow-sm p-5 flex flex-col justify-between h-full"
      [ngClass]="{
        'border-green-400': i.type === 'economy',
-       'bg-green-50/70': i.type === 'economy',
        'border-blue-400': i.type === 'cashflow',
-       'bg-blue-50/70': i.type === 'cashflow',
-       'border-orange-400': i.type === 'reminder',
-       'bg-orange-50/70': i.type === 'reminder'
+       'border-orange-400': i.type === 'reminder'
      }">
   <div>
     <div class="flex items-start space-x-3">
@@ -25,34 +23,26 @@
          }
       </div>
       <div class="flex-1">
-        <div class="flex items-center space-x-2">
-            <h3 class="text-base font-bold text-slate-800">{{ i.title }}</h3>
-        </div>
-         <span class="text-xs font-bold px-2 py-0.5 rounded-full"
+        <h3 class="text-base font-bold text-slate-800 leading-snug">{{ i.title }}</h3>
+      </div>
+    </div>
+    
+    <p class="text-slate-600 text-sm mt-3">{{ i.description }}</p>
+  </div>
+
+  <div class="mt-4 flex items-center justify-between text-sm">
+      <span class="font-bold px-2 py-0.5 rounded-full text-xs"
                [ngClass]="{
                  'bg-red-100 text-red-700': i.priority === 'Alta prioridade',
                  'bg-yellow-100 text-yellow-700': i.priority === 'Média prioridade',
                  'bg-blue-100 text-blue-700': i.priority === 'Baixa prioridade'
                }">{{ i.priority }}</span>
+
+      <div class="flex items-center text-sm font-bold text-primary-600 group-hover:text-primary-800">
+        <span>Detalhes</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transition-transform group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
       </div>
-    </div>
-    
-    <p class="text-slate-600 text-sm mt-3">{{ i.description }}</p>
-
-    <div class="mt-4 p-3 rounded-lg"
-         [ngClass]="{
-           'bg-green-100': i.type === 'economy',
-           'bg-blue-100': i.type === 'cashflow',
-           'bg-orange-100': i.type === 'reminder'
-         }">
-      <p class="text-xs font-semibold text-slate-500">Impacto estimado:</p>
-      <p class="font-bold text-slate-800">{{ i.estimatedImpact }}</p>
-    </div>
   </div>
-
-  <a href="#" class="mt-4 flex items-center justify-end text-sm font-bold text-indigo-600 hover:text-indigo-800 group">
-    <span>Ver detalhes</span>
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transition-transform group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-  </a>
 </div>
+</a>
 }

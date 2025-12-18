@@ -1,0 +1,36 @@
+/*
+ * Keyframe animation for a subtle fade-in and slide-up effect.
+ * This is used for all elements on the dashboard to create a staggered,
+ * smooth loading experience.
+ */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(15px); /* Start slightly lower */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * The .animate-in class applies the animation.
+ * It's set to start with opacity 0 to prevent a flash of unstyled content
+ * before the animation begins. The 'forwards' fill mode ensures
+ * the element retains the 'to' state after the animation completes.
+ */
+.animate-in {
+  animation: animate-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/*
+ * This is a specific tweak for the grid of AI insight cards.
+ * While the animation is applied via a wrapper div with an inline delay,
+ * this ensures that child elements within the grid structure are also
+ * initially hidden before their animation kicks in.
+ */
+.insights-grid > * {
+  opacity: 0;
+}

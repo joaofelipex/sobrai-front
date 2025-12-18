@@ -1,12 +1,11 @@
-
 <main class="p-4 sm:p-6 lg:p-8">
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
     <div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Minhas Metas</h1>
-      <p class="text-gray-500 mt-2 text-base sm:text-lg">Defina e acompanhe seus objetivos financeiros para crescer.</p>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Minhas Metas</h1>
+      <p class="text-slate-500 mt-2 text-base sm:text-lg">Defina e acompanhe seus objetivos financeiros para crescer.</p>
     </div>
-    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md hover:bg-primary-700 transform hover:-translate-y-0.5 transition-all flex items-center justify-center space-x-2">
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md shadow-primary-500/30 hover:bg-primary-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       <span>Adicionar Meta</span>
     </button>
@@ -20,10 +19,10 @@
     @if (goals().length > 0) {
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @for (goal of goals(); track goal.id) {
-          <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between">
+          <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-start">
-                <h3 class="text-lg font-semibold text-gray-800">{{ goal.name }}</h3>
+                <h3 class="text-lg font-semibold text-slate-800">{{ goal.name }}</h3>
                 <span class="px-2 py-1 text-xs font-semibold rounded-full"
                   [class.bg-blue-100]="goal.type === 'revenue'" [class.text-blue-800]="goal.type === 'revenue'"
                   [class.bg-green-100]="goal.type === 'savings'" [class.text-green-800]="goal.type === 'savings'">
@@ -31,20 +30,20 @@
                 </span>
               </div>
               <div class="mt-4">
-                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                <div class="flex justify-between text-sm text-slate-500 mb-1">
                   <span>Progresso</span>
-                  <span class="font-semibold text-gray-700">{{ calculateProgress(goal).toFixed(0) }}%</span>
+                  <span class="font-semibold text-slate-700">{{ calculateProgress(goal).toFixed(0) }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="w-full bg-slate-200 rounded-full h-2.5">
                   <div class="bg-primary-500 h-2.5 rounded-full" [style.width.%]="calculateProgress(goal)"></div>
                 </div>
-                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                <div class="flex justify-between text-sm text-slate-500 mt-2">
                   <span>{{ calculateCurrentAmount(goal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</span>
                   <span class="font-medium">{{ goal.targetAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</span>
                 </div>
               </div>
             </div>
-            <div class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-center text-sm text-gray-500 space-x-2">
+            <div class="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-center text-sm text-slate-500 space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
               @if (getDaysRemaining(goal.deadline) > 0) {
                 <span>Faltam {{ getDaysRemaining(goal.deadline) }} dias</span>
@@ -56,12 +55,12 @@
         }
       </div>
     } @else {
-      <div class="text-center py-16 px-6 bg-white rounded-xl border-2 border-dashed border-gray-300">
+      <div class="text-center py-16 px-6 bg-white rounded-xl border-2 border-dashed border-slate-300">
         <div class="w-16 h-16 mx-auto bg-primary-100 rounded-full flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-600"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
         </div>
-        <h3 class="mt-5 text-xl font-semibold text-gray-800">Nenhuma meta definida ainda</h3>
-        <p class="mt-2 text-gray-500">Crie sua primeira meta e comece a transformar seus objetivos em realidade.</p>
+        <h3 class="mt-5 text-xl font-semibold text-slate-800">Nenhuma meta definida ainda</h3>
+        <p class="mt-2 text-slate-500">Crie sua primeira meta e comece a transformar seus objetivos em realidade.</p>
         <button (click)="openModal()" class="mt-6 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md hover:bg-primary-700 transform hover:-translate-y-0.5 transition-all">
           Criar minha primeira meta
         </button>
@@ -71,33 +70,33 @@
 
   <!-- Add Goal Modal -->
   @if (isModalOpen()) {
-    <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
+    <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-md" (click)="$event.stopPropagation()">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-800">Adicionar Nova Meta</h3>
+        <div class="p-6 border-b border-slate-200/80">
+          <h3 class="text-xl font-semibold text-slate-800">Adicionar Nova Meta</h3>
         </div>
         <form (ngSubmit)="addGoal()" class="p-6 space-y-4">
           <div>
-            <label for="goalName" class="block text-sm font-medium text-gray-700">Nome da Meta</label>
-            <input type="text" id="goalName" [(ngModel)]="newGoal().name" name="goalName" placeholder="Ex: Faturar 10 mil no mês" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+            <label for="goalName" class="block text-sm font-medium text-slate-700">Nome da Meta</label>
+            <input type="text" id="goalName" [(ngModel)]="newGoal().name" name="goalName" placeholder="Ex: Faturar 10 mil no mês" required class="mt-1 input-field">
           </div>
           <div>
-            <label for="goalType" class="block text-sm font-medium text-gray-700">Tipo de Meta</label>
-            <select id="goalType" [(ngModel)]="newGoal().type" name="goalType" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+            <label for="goalType" class="block text-sm font-medium text-slate-700">Tipo de Meta</label>
+            <select id="goalType" [(ngModel)]="newGoal().type" name="goalType" class="mt-1 input-field">
               <option value="revenue">Faturamento</option>
               <option value="savings">Economia</option>
             </select>
           </div>
           <div>
-            <label for="targetAmount" class="block text-sm font-medium text-gray-700">Valor Alvo (R$)</label>
-            <input type="number" id="targetAmount" [(ngModel)]="newGoal().targetAmount" name="targetAmount" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+            <label for="targetAmount" class="block text-sm font-medium text-slate-700">Valor Alvo (R$)</label>
+            <input type="number" id="targetAmount" [(ngModel)]="newGoal().targetAmount" name="targetAmount" required class="mt-1 input-field">
           </div>
           <div>
-            <label for="deadline" class="block text-sm font-medium text-gray-700">Prazo Final</label>
-            <input type="date" id="deadline" [(ngModel)]="newGoal().deadline" name="deadline" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+            <label for="deadline" class="block text-sm font-medium text-slate-700">Prazo Final</label>
+            <input type="date" id="deadline" [(ngModel)]="newGoal().deadline" name="deadline" required class="mt-1 input-field">
           </div>
           <div class="pt-4 flex justify-end space-x-3">
-            <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Cancelar</button>
+            <button type="button" (click)="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
             <button type="submit" class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700">Salvar Meta</button>
           </div>
         </form>
@@ -105,3 +104,20 @@
     </div>
   }
 </main>
+<style>
+  .input-field {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border: 1px solid #d1d5db; /* border-slate-300 */
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  .input-field:focus {
+    outline: none;
+    --tw-ring-color: rgb(99 102 241 / 0.2); /* ring-primary-500/20 */
+    box-shadow: 0 0 0 4px var(--tw-ring-color);
+    border-color: #6366f1; /* border-primary-500 */
+  }
+</style>
