@@ -8,6 +8,8 @@ import { SubscriptionComponent } from './components/pages/subscription/subscript
 import { BankIntegrationComponent } from './components/pages/bank-integration/bank-integration.component';
 import { FinancialAnalysisComponent } from './components/pages/financial-analysis/financial-analysis.component';
 import { AiInsightsPageComponent } from './components/pages/ai-insights-page/ai-insights-page.component';
+import { GoalsComponent } from './components/pages/goals/goals.component';
+import { RecurringComponent } from './components/pages/recurring/recurring.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'painel-principal', pathMatch: 'full' },
@@ -17,6 +19,8 @@ export const routes: Routes = [
     { path: 'notas-fiscais', component: InvoicesComponent, title: 'Notas Fiscais | Sobrai' },
     { path: 'analise-financeira', component: FinancialAnalysisComponent, title: 'Análise Financeira | Sobrai' },
     { path: 'insights-ia', component: AiInsightsPageComponent, title: 'Insights da IA | Sobrai' },
+    { path: 'metas', component: GoalsComponent, title: 'Metas | Sobrai' },
+    { path: 'recorrencias', component: RecurringComponent, title: 'Recorrências | Sobrai' },
     { path: 'relatorios', component: ReportsComponent, title: 'Relatórios | Sobrai' },
     { path: 'assinatura', component: SubscriptionComponent, title: 'Assinatura | Sobrai' },
     { path: 'configuracoes', component: SettingsComponent, title: 'Configurações | Sobrai' },

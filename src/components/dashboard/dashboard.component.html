@@ -1,10 +1,12 @@
 <main class="p-4 sm:p-6 lg:p-8 space-y-8">
 
-  <app-welcome-banner [userName]="userName()" [companyName]="companyProfile()?.name || ''" />
+  <div class="animate-in" style="animation-delay: 0.1s;">
+    <app-welcome-banner [userName]="userName()" [companyName]="companyProfile()?.name || ''" />
+  </div>
 
   <!-- Action Buttons -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <a routerLink="/notas-fiscais" class="px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md shadow-green-500/30 hover:bg-green-600 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in" style="animation-delay: 0.2s;">
+    <a routerLink="/notas-fiscais" class="px-6 py-3 bg-primary-600 text-white font-bold rounded-lg shadow-md shadow-primary-500/30 hover:bg-primary-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       <span>Emitir Nota Fiscal</span>
     </a>
@@ -20,8 +22,10 @@
 
   <!-- Metrics Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    @for (metric of metrics(); track metric.title) {
-      <app-metric-card [metric]="metric" [link]="metric.link"></app-metric-card>
+    @for (metric of metrics(); track metric.title; let i = $index) {
+      <div class="animate-in" [style.animation-delay.s]="0.3 + i * 0.05">
+        <app-metric-card [metric]="metric" [link]="metric.link"></app-metric-card>
+      </div>
     } @empty {
       @for (i of [1,2,3,4]; track i) {
         <div class="h-40 bg-slate-200 rounded-xl animate-pulse"></div>
@@ -29,30 +33,49 @@
     }
   </div>
 
-  <!-- AI Insights Section -->
-  <div>
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-xl font-bold tracking-tight text-slate-800">Insights da IA</h2>
-        <p class="text-sm text-slate-500">Análise integrada de 50 transações e 2 notas fiscais</p>
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Balance Chart -->
+      <div class="animate-in" style="animation-delay: 0.6s;">
+        <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">Evolução do Saldo (Últimos 30 dias)</h3>
+          <app-line-chart [data]="balanceHistory()" [chartColors]="chartColors"></app-line-chart>
+        </div>
       </div>
-      <a routerLink="/insights-ia" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Ver todos</a>
+
+      <!-- Goal Progress Section -->
+      @if (revenueGoal(); as goal) {
+        <div class="animate-in" style="animation-delay: 0.7s;">
+          <app-goal-progress-card [goal]="goal" [currentAmount]="totalRevenueForGoal()"></app-goal-progress-card>
+        </div>
+      }
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Right Column (AI Insights) -->
+    <div class="space-y-6">
+      <div class="animate-in" style="animation-delay: 0.8s;">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold tracking-tight text-slate-800">Insights da IA</h2>
+            <p class="text-sm text-slate-500">Nossas principais dicas para você.</p>
+          </div>
+          <a routerLink="/insights-ia" class="text-sm font-semibold text-primary-600 hover:text-primary-800">Ver todos</a>
+        </div>
+      </div>
       @if (isLoadingInsights()) {
         @for (i of [1,2,3]; track i) {
-          <div class="bg-white border border-slate-200/60 rounded-xl p-6 h-64 animate-pulse">
-            <div class="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
-            <div class="h-3 bg-slate-200 rounded w-full mb-2"></div>
-            <div class="h-3 bg-slate-200 rounded w-full mb-2"></div>
-            <div class="h-3 bg-slate-200 rounded w-1/2"></div>
-          </div>
+          <div class="bg-white border border-slate-200/60 rounded-xl p-6 h-48 animate-pulse animate-in" [style.animation-delay.s]="0.9 + i * 0.1"></div>
         }
       } @else {
-        @for (insight of insights(); track insight.title) {
-          <app-ai-insight-card [insight]="insight"></app-ai-insight-card>
+        @for (insight of insights(); track insight.title; let i = $index) {
+          <div class="animate-in" [style.animation-delay.s]="0.9 + i * 0.1">
+            <app-ai-insight-card [insight]="insight"></app-ai-insight-card>
+          </div>
         } @empty {
-          <div class="col-span-full text-center py-12 bg-white rounded-xl">
+           <div class="animate-in col-span-full text-center py-12 bg-white rounded-xl" style="animation-delay: 0.9s;">
             <p class="text-slate-500">Nenhuma dica disponível no momento.</p>
           </div>
         }
