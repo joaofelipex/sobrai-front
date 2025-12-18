@@ -105,8 +105,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     try {
       this.isLoadingInsights.set(true);
       // Get the required data for generating insights
-      const profile = await this.onboardingService.getCompanyProfile().toPromise();
-      const transactions = await this.transactionService.getTransactions().toPromise();
+      const profile = await this.onboardingService.companyProfile().toPromise();
+      const transactions = await this.transactionService.transactions().toPromise();
       
       if (profile && transactions) {
         const insights = await this.geminiService.generateFinancialInsights(profile, transactions);
