@@ -1,5 +1,5 @@
 
 export const environment = {
   production: false,
-  geminiApiKey: '' // Your Gemini API key should be securely stored here or in environment variables
+  geminiApiKey: 'AIzaSyAu3OBCDIyl9p4R80F88AdRz-z7M40jB0U' // Your Gemini API key should be securely stored here or in environment variables
 };
