@@ -16,16 +16,18 @@ interface LineChartData {
 })
 export class LineChartComponent {
   data = input.required<LineChartData[]>();
+  chartColors = input<Record<string, string>>({});
   
   keys = computed(() => {
     if (this.data().length === 0) return [];
     return Object.keys(this.data()[0]).filter(k => k !== 'name');
   });
 
-  colors: Record<string, string> = {
+  colors = computed(() => ({
     'Receita': '#1db865',
     'Despesa': '#ef4444',
-  };
+    ...this.chartColors()
+  }));
 
   points = computed(() => {
     const data = this.data();
@@ -43,7 +45,7 @@ export class LineChartComponent {
     }));
 
     const paths = this.keys().map(key => {
-      const color = this.colors[key] || '#6b7280';
+      const color = this.colors()[key] || '#6b7280';
       const pathData = data.map((d, i) => {
         const x = (i / (data.length - 1)) * width;
         const y = height - (d[key] / maxValue) * height;

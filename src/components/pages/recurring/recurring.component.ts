@@ -38,6 +38,14 @@ export class RecurringComponent {
     this.form().type === 'expense' ? ExpenseCategories : RevenueCategories
   );
 
+  updateFormType(type: 'expense' | 'revenue') {
+    this.form.update(f => ({
+      ...f,
+      type,
+      category: type === 'expense' ? 'Software' : 'Vendas'
+    }));
+  }
+
   openModal(item: RecurringTransaction | null = null) {
     if (item) {
       this.editingTransactionId.set(item.id);
