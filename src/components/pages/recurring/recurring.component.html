@@ -80,8 +80,8 @@
             <div>
               <label class="block text-sm font-medium text-slate-700">Tipo</label>
               <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg mt-1">
-                <button type="button" (click)="form.update(f => ({...f, type: 'expense'}))" class="flex-1 px-4 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="form().type === 'expense'">Despesa</button>
-                <button type="button" (click)="form.update(f => ({...f, type: 'revenue'}))" class="flex-1 px-4 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="form().type === 'revenue'">Receita</button>
+                <button type="button" (click)="updateFormType('expense')" class="flex-1 px-4 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="form().type === 'expense'">Despesa</button>
+                <button type="button" (click)="updateFormType('revenue')" class="flex-1 px-4 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="form().type === 'revenue'">Receita</button>
               </div>
             </div>
             <div>
