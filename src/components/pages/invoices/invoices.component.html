@@ -5,7 +5,7 @@
       <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Notas Fiscais</h1>
       <p class="text-slate-500 mt-2 text-base sm:text-lg">Emita e gerencie suas notas fiscais de serviço.</p>
     </div>
-    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md shadow-primary-500/30 hover:bg-primary-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       <span>Emitir NF-e</span>
     </button>
@@ -55,7 +55,7 @@
                 </td>
                 <td class="px-6 py-4 text-center space-x-2">
                   @if(invoice.status === 'issued') {
-                    <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-primary-600 hover:underline">Marcar como Paga</button>
+                    <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-emerald-700 hover:underline">Marcar como Paga</button>
                     <button (click)="updateStatus(invoice.id, 'canceled')" class="font-medium text-red-600 hover:underline">Cancelar</button>
                   } @else {
                     <span class="text-slate-400">-</span>
@@ -95,7 +95,7 @@
                 <button type="button" (click)="toggleNewClientForm(true)" class="px-3 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm hover:bg-slate-300">Novo</button>
               </div>
             } @else {
-              <div class="mt-1 p-4 border border-primary-200 rounded-lg bg-primary-50/50 space-y-3">
+              <div class="mt-1 p-4 border border-emerald-200 rounded-lg bg-emerald-50/50 space-y-3">
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label for="newClientName" class="block text-xs font-medium text-slate-600">Nome do Novo Cliente</label>
@@ -106,7 +106,7 @@
                       <input type="text" id="newClientDocument" name="newClientDocument" [(ngModel)]="newClientForm().document" class="mt-1 input-field input-field-sm">
                     </div>
                  </div>
-                 <button type="button" (click)="toggleNewClientForm(false)" class="text-sm font-semibold text-primary-600 hover:underline">Cancelar</button>
+                 <button type="button" (click)="toggleNewClientForm(false)" class="text-sm font-semibold text-emerald-700 hover:underline">Cancelar</button>
               </div>
             }
           </div>
@@ -127,7 +127,7 @@
           </div>
           <div class="pt-4 flex justify-end space-x-3">
             <button type="button" (click)="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
-            <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 disabled:bg-slate-300">Emitir Nota</button>
+            <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 disabled:bg-slate-300">Emitir Nota</button>
           </div>
         </form>
       </div>
@@ -138,5 +138,5 @@
 <style>
   .input-field { display: block; width: 100%; padding: 0.5rem 0.75rem; background-color: white; border: 1px solid #d1d5db; border-radius: 0.5rem; }
   .input-field-sm { padding: 0.4rem 0.6rem; font-size: 0.875rem; }
-  .input-field:focus { outline: none; --tw-ring-color: rgb(99 102 241 / 0.2); box-shadow: 0 0 0 4px var(--tw-ring-color); border-color: #6366f1; }
+  .input-field:focus { outline: none; --tw-ring-color: rgb(16 185 129 / 0.2); box-shadow: 0 0 0 4px var(--tw-ring-color); border-color: #10b981; }
 </style>

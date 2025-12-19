@@ -9,13 +9,13 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
     @for(plan of plans(); track plan.id) {
       <div class="relative bg-white border rounded-xl shadow-sm p-8 flex flex-col transition-all duration-300 ease-out"
-           [class.border-primary-500]="currentPlanId() === plan.id"
-           [class.shadow-primary-500/20]="currentPlanId() === plan.id"
+           [class.border-emerald-500]="currentPlanId() === plan.id"
+           [class.shadow-emerald-500/20]="currentPlanId() === plan.id"
            [class.shadow-lg]="currentPlanId() === plan.id"
            [class.border-slate-200/80]="currentPlanId() !== plan.id">
         
         @if (currentPlanId() === plan.id) {
-          <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary-500 text-white text-xs font-semibold rounded-full shadow-md">
+          <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full shadow-md">
             Plano Atual
           </div>
         }
@@ -38,11 +38,11 @@
         <button (click)="selectPlan(plan)" 
                 class="w-full mt-8 py-3 font-semibold rounded-lg transition-colors"
                 [disabled]="currentPlanId() === plan.id"
-                [class.bg-primary-600]="currentPlanId() !== plan.id"
+                [class.bg-emerald-600]="currentPlanId() !== plan.id"
                 [class.text-white]="currentPlanId() !== plan.id"
-                [class.hover:bg-primary-700]="currentPlanId() !== plan.id"
+                [class.hover:bg-emerald-700]="currentPlanId() !== plan.id"
                 [class.shadow-md]="currentPlanId() !== plan.id"
-                [class.shadow-primary-500/30]="currentPlanId() !== plan.id"
+                [class.shadow-emerald-500/30]="currentPlanId() !== plan.id"
                 [class.bg-slate-200]="currentPlanId() === plan.id"
                 [class.text-slate-600]="currentPlanId() === plan.id"
                 [class.cursor-default]="currentPlanId() === plan.id">

@@ -1,8 +1,8 @@
 @if (goal(); as g) {
-<a routerLink="metas" class="block bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-1">
+<a routerLink="/metas" class="block bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-1">
   <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-6">
     <!-- Icon -->
-    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 text-white shadow-md shadow-primary-500/20 rounded-full flex items-center justify-center mx-auto sm:mx-0">
+    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-md shadow-emerald-500/20 rounded-full flex items-center justify-center mx-auto sm:mx-0">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
     </div>
 
@@ -10,10 +10,10 @@
     <div class="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
       <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
         <h3 class="text-lg font-semibold text-slate-800">{{ g.name }}</h3>
-        <span class="text-sm font-semibold text-primary-600 mt-1 sm:mt-0">{{ progress().toFixed(0) }}% Concluído</span>
+        <span class="text-sm font-semibold text-emerald-700 mt-1 sm:mt-0">{{ progress().toFixed(0) }}% Concluído</span>
       </div>
       <div class="w-full bg-slate-200 rounded-full h-2.5 my-2">
-        <div class="bg-primary-500 h-2.5 rounded-full" [style.width.%]="progress()"></div>
+        <div class="bg-emerald-500 h-2.5 rounded-full" [style.width.%]="progress()"></div>
       </div>
       <div class="text-sm text-slate-500">
         <span>{{ currentAmount().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</span>
