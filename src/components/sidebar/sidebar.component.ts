@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
 import { OnboardingService } from '../../services/onboarding.service';
 
@@ -20,9 +20,10 @@ interface NavItem {
 export class SidebarComponent {
   sidebarService = inject(SidebarService);
   onboardingService = inject(OnboardingService);
-  
+  private readonly router = inject(Router);
+
   isOpen = this.sidebarService.isOpen;
-  
+
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
 
   navItems: NavItem[] = [
@@ -41,5 +42,32 @@ export class SidebarComponent {
 
   closeSidebar() {
     this.sidebarService.close();
+  }
+
+  logout(): void {
+    try {
+      // Remove apenas dados do app (evita apagar storage de outros sites/projetos)
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sobrai_')) {
+          keysToRemove.push(key);
+        }
+      }
+      for (const key of keysToRemove) {
+        localStorage.removeItem(key);
+      }
+
+      // Reseta estado em memória
+      this.onboardingService.companyProfile.set(null);
+      this.onboardingService.isOnboardingComplete.set(false);
+
+      this.closeSidebar();
+      void this.router.navigateByUrl('/');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      this.closeSidebar();
+      void this.router.navigateByUrl('/');
+    }
   }
 }

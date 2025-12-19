@@ -10,7 +10,7 @@
 
 <!-- Sidebar -->
 <aside 
-  class="fixed top-0 left-0 w-64 h-full bg-indigo-700 flex flex-col z-40
+  class="fixed top-0 left-0 w-64 h-full bg-gradient-to-b from-emerald-800 via-green-800 to-emerald-900 flex flex-col z-40
          transition-transform duration-300 ease-in-out
          md:relative md:translate-x-0"
   [class.translate-x-0]="isOpen()"
@@ -27,21 +27,21 @@
         <p class="text-xs text-green-400 font-semibold">Fiscal e Financeiro</p>
       </div>
     </div>
-    <button (click)="closeSidebar()" class="md:hidden p-2 rounded-md text-indigo-200 hover:bg-indigo-600">
+    <button (click)="closeSidebar()" class="md:hidden p-2 rounded-md text-emerald-100 hover:bg-emerald-700/60">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
 
   <!-- Navigation -->
   <nav class="flex-1 p-4 space-y-1">
-    <p class="px-4 pt-2 pb-2 text-xs font-semibold text-indigo-300 uppercase">Menu</p>
+    <p class="px-4 pt-2 pb-2 text-xs font-semibold text-emerald-200 uppercase">Menu</p>
     @for (item of navItems; track item.path) {
       <a
-        [routerLink]="item.path"
-        routerLinkActive="bg-indigo-600 text-white"
+        [routerLink]="['/', item.path]"
+        routerLinkActive="bg-emerald-600 text-white"
         [routerLinkActiveOptions]="{ exact: item.path === 'painel-principal' }"
         (click)="closeSidebar()"
-        class="flex items-center px-4 py-2.5 text-indigo-200 rounded-lg hover:bg-indigo-600/50 hover:text-white transition-colors duration-200 font-medium"
+        class="flex items-center px-4 py-2.5 text-emerald-100 rounded-lg hover:bg-emerald-700/40 hover:text-white transition-colors duration-200 font-medium"
       >
         @if (item.icon === 'grid') {
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
@@ -78,10 +78,9 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.2 1.2L3 12l5.8 1.9a2 2 0 0 1 1.2 1.2L12 21l1.9-5.8a2 2 0 0 1 1.2-1.2L21 12l-5.8-1.9a2 2 0 0 1-1.2-1.2Z"></path></svg>
         <h4 class="font-bold text-white">IA Ativa</h4>
       </div>
-      <p class="text-xs text-indigo-200 mt-1">Monitorando finanças e impostos.</p>
+      <p class="text-xs text-emerald-100 mt-1">Monitorando finanças e impostos.</p>
     </div>
   </div>
-
 
   <!-- User Profile -->
   <div class="p-4 border-t border-white/10">
@@ -89,9 +88,9 @@
       <div class="flex-1">
         <p class="text-sm font-semibold text-white truncate" [title]="userName()">{{ userName() }}</p>
       </div>
-      <a href="#" class="p-2 rounded-md text-indigo-200 hover:bg-indigo-600">
+      <button type="button" (click)="logout()" class="p-2 rounded-md text-emerald-100 hover:bg-emerald-700/60">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
-      </a>
+      </button>
     </div>
   </div>
 </aside>

@@ -5,7 +5,7 @@
       <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Financeiro</h1>
       <p class="text-slate-500 mt-2 text-base sm:text-lg">Registre e acompanhe suas receitas e despesas.</p>
     </div>
-    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md shadow-primary-500/30 hover:bg-primary-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       <span>Adicionar Transação</span>
     </button>
@@ -76,7 +76,7 @@
                   {{ (transaction.type === 'expense' ? '-' : '+') + transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
                 </td>
                 <td class="px-6 py-4 text-center">
-                  <button (click)="openModal(transaction.id)" class="p-2 text-slate-500 hover:text-primary-600 rounded-md">
+                  <button (click)="openModal(transaction.id)" class="p-2 text-slate-500 hover:text-emerald-600 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
                   </button>
                   <button (click)="deleteTransaction(transaction.id)" class="p-2 text-slate-500 hover:text-red-600 rounded-md">
@@ -107,7 +107,7 @@
                <div class="flex justify-between items-center mt-3 text-sm text-slate-500">
                   <p>{{ transaction.date | date:'dd/MM/yyyy' }}</p>
                   <div class="space-x-2">
-                     <button (click)="openModal(transaction.id)" class="p-1 text-slate-500 hover:text-primary-600">
+                     <button (click)="openModal(transaction.id)" class="p-1 text-slate-500 hover:text-emerald-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
                       </button>
                       <button (click)="deleteTransaction(transaction.id)" class="p-1 text-slate-500 hover:text-red-600">
@@ -121,12 +121,12 @@
       </div>
     } @else {
        <div class="text-center p-12">
-          <div class="w-16 h-16 mx-auto bg-primary-100 rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-600"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+          <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
           </div>
           <h3 class="mt-5 text-xl font-semibold text-slate-800">Nenhuma transação registrada</h3>
           <p class="mt-2 text-slate-500">Clique no botão abaixo para adicionar sua primeira receita ou despesa.</p>
-          <button (click)="openModal()" class="mt-6 px-6 py-2.5 bg-primary-600 text-white font-bold rounded-lg shadow-md hover:bg-primary-700 transform hover:-translate-y-0.5 transition-all">
+          <button (click)="openModal()" class="mt-6 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md hover:bg-emerald-700 transform hover:-translate-y-0.5 transition-all">
             Adicionar Transação
           </button>
         </div>
@@ -174,7 +174,7 @@
           </div>
           <div class="p-6 bg-slate-50/50 rounded-b-xl flex justify-end space-x-3">
              <button type="button" (click)="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
-             <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 disabled:bg-slate-300">Salvar Transação</button>
+             <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 disabled:bg-slate-300">Salvar Transação</button>
           </div>
         </form>
       </div>
@@ -194,8 +194,8 @@
   }
   .input-field:focus {
     outline: none;
-    --tw-ring-color: rgb(99 102 241 / 0.2); /* ring-primary-500/20 */
+    --tw-ring-color: rgb(16 185 129 / 0.2); /* ring-emerald-500/20 */
     box-shadow: 0 0 0 4px var(--tw-ring-color);
-    border-color: #6366f1; /* border-primary-500 */
+    border-color: #10b981; /* border-emerald-500 */
   }
 </style>
