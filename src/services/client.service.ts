@@ -7,7 +7,7 @@ import { Client } from '../models/client.model';
 })
 export class ClientService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3003/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   clients = signal<Client[]>([]);
 

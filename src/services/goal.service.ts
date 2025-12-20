@@ -8,7 +8,7 @@ import { Goal } from '../models/goal.model';
 })
 export class GoalService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3003/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   goals = signal<Goal[]>([]);
 

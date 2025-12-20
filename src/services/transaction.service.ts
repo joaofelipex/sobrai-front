@@ -7,7 +7,7 @@ import { Transaction } from '../models/transaction.model';
 })
 export class TransactionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3003/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   transactions = signal<Transaction[]>([]);
 
