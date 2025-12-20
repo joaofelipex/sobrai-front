@@ -1,38 +1,39 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Client } from '../models/client.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientService {
-  private storageKey = 'sobrai_clients_v1';
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3003/api';
+
   clients = signal<Client[]>([]);
 
   constructor() {
-    this.loadClientsFromStorage();
-    effect(() => {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.clients()));
-    });
+    this.loadClientsFromServer();
   }
 
-  private loadClientsFromStorage() {
-    const data = localStorage.getItem(this.storageKey);
-    if (data) {
-      this.clients.set(JSON.parse(data));
-    } else {
-      // Add a sample client on first run
-      const sampleClient: Client = { id: self.crypto.randomUUID(), name: 'Cliente Exemplo Ltda', document: '12.345.678/0001-90' };
-      this.clients.set([sampleClient]);
-    }
+  private loadClientsFromServer() {
+    this.http.get<Client[]>(`${this.apiUrl}/clients`).subscribe({
+      next: (data) => {
+        this.clients.set(data);
+      },
+      error: (err) => console.error('Failed to load clients from server', err)
+    });
   }
 
   getClientById(id: string): Client | undefined {
     return this.clients().find(c => c.id === id);
   }
 
-  addClient(clientData: Omit<Client, 'id'>): Client {
-    const newClient: Client = { ...clientData, id: self.crypto.randomUUID() };
-    this.clients.update(clients => [...clients, newClient].sort((a, b) => a.name.localeCompare(b.name)));
-    return newClient;
+  addClient(clientData: Omit<Client, 'id'>): void {
+    this.http.post<Client>(`${this.apiUrl}/clients`, clientData).subscribe({
+      next: (newClient) => {
+        this.clients.update(clients => [...clients, newClient].sort((a, b) => a.name.localeCompare(b.name)));
+      },
+      error: (err) => console.error('Failed to add client', err)
+    });
   }
 }

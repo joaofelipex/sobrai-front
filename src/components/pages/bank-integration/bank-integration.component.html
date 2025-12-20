@@ -1,0 +1,81 @@
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Integração Bancária</h1>
+      <p class="text-slate-500 mt-2 text-base sm:text-lg">Conecte sua conta para importar transações automaticamente.</p>
+    </div>
+  </div>
+
+  @switch (connectionStatus()) {
+    @case ('disconnected') {
+      <div class="text-center py-16 px-6 bg-white rounded-xl border-2 border-dashed border-slate-300">
+        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+        </div>
+        <h3 class="mt-5 text-xl font-semibold text-slate-800">Conecte sua conta bancária</h3>
+        <p class="mt-2 text-slate-500">Importe suas transações com segurança e economize tempo.</p>
+        <button (click)="connectBank()" class="mt-6 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md hover:bg-emerald-700 transform hover:-translate-y-0.5 transition-all">
+          Conectar Banco
+        </button>
+      </div>
+    }
+    @case ('connecting') {
+      <div class="text-center py-16 px-6 bg-white rounded-xl">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <p class="text-slate-500 animate-pulse">Conectando com seu banco...</p>
+        </div>
+      </div>
+    }
+    @case ('connected') {
+      <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm">
+        <div class="p-6 border-b border-slate-200/80 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-slate-800">Conta Conectada</h3>
+              <p class="text-sm text-slate-500">Última atualização: agora</p>
+            </div>
+          </div>
+          <button (click)="disconnectBank()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300 text-sm">Desconectar</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-slate-500">
+            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+              <tr>
+                <th scope="col" class="px-6 py-4">Data</th>
+                <th scope="col" class="px-6 py-4">Descrição</th>
+                <th scope="col" class="px-6 py-4 text-right">Valor</th>
+                <th scope="col" class="px-6 py-4 text-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (t of mockTransactions(); track t.id) {
+                <tr class="bg-white border-b border-slate-200/80 last:border-b-0 hover:bg-slate-50/50">
+                  <td class="px-6 py-4">{{ t.date | date:'dd/MM/yyyy' }}</td>
+                  <td class="px-6 py-4 font-medium text-slate-900">{{ t.description }}</td>
+                  <td class="px-6 py-4 text-right font-semibold" [class.text-success-600]="t.type === 'credit'" [class.text-slate-800]="t.type === 'debit'">
+                    {{ t.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    @if (t.imported) {
+                      <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Importado
+                      </span>
+                    } @else {
+                      <button (click)="importTransaction(t.id)" class="px-3 py-1 bg-emerald-100 text-emerald-800 font-semibold rounded-full text-xs hover:bg-emerald-200">Importar</button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</main>

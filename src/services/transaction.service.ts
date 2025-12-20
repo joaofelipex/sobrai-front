@@ -1,11 +1,14 @@
-import { Injectable, signal, effect, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Transaction } from '../models/transaction.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService {
-  private storageKey = 'sobrai_transactions_v1';
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3003/api';
+
   transactions = signal<Transaction[]>([]);
 
   totalRevenue = computed(() => 
@@ -80,17 +83,19 @@ export class TransactionService {
   });
 
   constructor() {
-    this.loadTransactionsFromStorage();
-    effect(() => {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.transactions()));
-    });
+    this.loadTransactionsFromServer();
   }
 
-  private loadTransactionsFromStorage() {
-    const data = localStorage.getItem(this.storageKey);
-    if (data) {
-      this.transactions.set(JSON.parse(data));
-    }
+  private loadTransactionsFromServer() {
+    this.http.get<Transaction[]>(`${this.apiUrl}/transactions`).subscribe({
+      next: (data) => {
+        this.transactions.set(this.sortTransactions(data));
+      },
+      error: (err) => {
+        console.error('Failed to load transactions from server', err);
+        // Optionally, load from local storage as a fallback or show an error
+      }
+    });
   }
   
   private sortTransactions(transactions: Transaction[]): Transaction[] {
@@ -98,18 +103,32 @@ export class TransactionService {
   }
 
   addTransaction(transaction: Omit<Transaction, 'id'>) {
-    const newTransaction = { ...transaction, id: self.crypto.randomUUID() };
-    this.transactions.update(transactions => this.sortTransactions([...transactions, newTransaction]));
+    this.http.post<Transaction>(`${this.apiUrl}/transactions`, transaction).subscribe({
+      next: (newTransaction) => {
+        this.transactions.update(transactions => this.sortTransactions([...transactions, newTransaction]));
+      },
+      error: (err) => console.error('Failed to add transaction', err)
+    });
   }
 
   updateTransaction(updatedTransaction: Transaction) {
-    this.transactions.update(transactions => 
-      this.sortTransactions(transactions.map(t => t.id === updatedTransaction.id ? updatedTransaction : t))
-    );
+    this.http.put<Transaction>(`${this.apiUrl}/transactions/${updatedTransaction.id}`, updatedTransaction).subscribe({
+      next: (result) => {
+        this.transactions.update(transactions => 
+          this.sortTransactions(transactions.map(t => t.id === updatedTransaction.id ? result : t))
+        );
+      },
+      error: (err) => console.error('Failed to update transaction', err)
+    });
   }
 
   deleteTransaction(id: string) {
-    this.transactions.update(transactions => transactions.filter(t => t.id !== id));
+    this.http.delete(`${this.apiUrl}/transactions/${id}`).subscribe({
+      next: () => {
+        this.transactions.update(transactions => transactions.filter(t => t.id !== id));
+      },
+      error: (err) => console.error('Failed to delete transaction', err)
+    });
   }
   
   getTransactionById(id: string): Transaction | undefined {

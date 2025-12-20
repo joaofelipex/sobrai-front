@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TransactionService } from '../../../services/transaction.service';
 import { ToastService } from '../../../services/toast.service';
+import { TransactionModalService } from '../../../services/transaction-modal.service';
 import { Transaction, ExpenseCategories, RevenueCategories } from '../../../models/transaction.model';
 
 @Component({
@@ -17,11 +18,12 @@ import { Transaction, ExpenseCategories, RevenueCategories } from '../../../mode
 export class FinancialComponent implements OnInit {
   transactionService = inject(TransactionService);
   toastService = inject(ToastService);
+  transactionModalService = inject(TransactionModalService);
   route = inject(ActivatedRoute);
   datePipe = inject(DatePipe);
 
-  isModalOpen = signal(false);
-  editingTransactionId = signal<string | null>(null);
+  isModalOpen = this.transactionModalService.isModalOpen;
+  editingTransactionId = this.transactionModalService.editingTransactionId;
 
   // Filtros
   filter = signal<'all' | 'revenue' | 'expense'>('all');
@@ -43,8 +45,33 @@ export class FinancialComponent implements OnInit {
     this.transactionForm().type === 'expense' ? ExpenseCategories : RevenueCategories
   );
 
+  constructor() {
+    effect(() => {
+      if (this.isModalOpen()) {
+        const initialData = this.transactionModalService.initialData();
+        const editingId = this.editingTransactionId();
+
+        if (editingId && !initialData) {
+          const transactionToEdit = this.transactionService.getTransactionById(editingId);
+          if (transactionToEdit) {
+            this.transactionForm.set({ ...transactionToEdit });
+          }
+        } else if (initialData) {
+          this.transactionForm.set({
+            type: initialData.type || 'expense',
+            description: initialData.description || '',
+            amount: initialData.amount || 0,
+            date: initialData.date || this.datePipe.transform(new Date(), 'yyyy-MM-dd') || '',
+            category: initialData.category || 'Outros',
+          });
+        } else {
+          this.resetForm();
+        }
+      }
+    });
+  }
+
   ngOnInit() {
-    this.resetForm();
     this.route.paramMap.subscribe(params => {
       const filterParam = params.get('filter');
       if (filterParam === 'revenue' || filterParam === 'expense') {
@@ -54,21 +81,11 @@ export class FinancialComponent implements OnInit {
   }
 
   openModal(transactionId: string | null = null) {
-    if (transactionId) {
-      const transactionToEdit = this.transactionService.getTransactionById(transactionId);
-      if (transactionToEdit) {
-        this.editingTransactionId.set(transactionId);
-        this.transactionForm.set({ ...transactionToEdit });
-      }
-    } else {
-      this.resetForm();
-      this.editingTransactionId.set(null);
-    }
-    this.isModalOpen.set(true);
+    this.transactionModalService.open(null, transactionId);
   }
 
   closeModal() {
-    this.isModalOpen.set(false);
+    this.transactionModalService.close();
   }
 
   resetForm() {
@@ -92,6 +109,7 @@ export class FinancialComponent implements OnInit {
       this.transactionService.addTransaction(formValue);
       this.toastService.show('Transação adicionada com sucesso!');
     }
+    this.transactionModalService.notifyTransactionSaved();
     this.closeModal();
   }
 

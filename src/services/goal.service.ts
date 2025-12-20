@@ -1,27 +1,28 @@
 
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Goal } from '../models/goal.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoalService {
-  private storageKey = 'sobrai_goals_v1';
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3003/api';
+
   goals = signal<Goal[]>([]);
 
   constructor() {
-    this.loadGoalsFromStorage();
-    // Salva as metas no localStorage sempre que o sinal for atualizado
-    effect(() => {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.goals()));
-    });
+    this.loadGoalsFromServer();
   }
 
-  private loadGoalsFromStorage() {
-    const storedGoals = localStorage.getItem(this.storageKey);
-    if (storedGoals) {
-      this.goals.set(JSON.parse(storedGoals));
-    }
+  private loadGoalsFromServer() {
+    this.http.get<Goal[]>(`${this.apiUrl}/goals`).subscribe({
+      next: (data) => {
+        this.goals.set(data);
+      },
+      error: (err) => console.error('Failed to load goals from server', err)
+    });
   }
 
   getGoals(): Goal[] {
@@ -29,10 +30,11 @@ export class GoalService {
   }
 
   addGoal(goalData: Omit<Goal, 'id'>): void {
-    const newGoal: Goal = {
-      ...goalData,
-      id: self.crypto.randomUUID(),
-    };
-    this.goals.update(goals => [...goals, newGoal]);
+    this.http.post<Goal>(`${this.apiUrl}/goals`, goalData).subscribe({
+      next: (newGoal) => {
+        this.goals.update(goals => [...goals, newGoal]);
+      },
+      error: (err) => console.error('Failed to add goal', err)
+    });
   }
 }

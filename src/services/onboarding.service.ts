@@ -1,13 +1,16 @@
 
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CompanyProfile } from '../models/company.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnboardingService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3003/api';
+  
   private storageKey = 'sobrai_onboarding_complete_v1';
-  private companyProfileKey = 'sobrai_company_profile_v1';
   private firstRunKey = 'sobrai_first_run_complete_v1';
 
   isOnboardingComplete = signal<boolean>(false);
@@ -21,22 +24,33 @@ export class OnboardingService {
       this.isOnboardingComplete.set(isComplete);
       
       if (isComplete) {
-        const profileData = localStorage.getItem(this.companyProfileKey);
-        console.log('Dados do perfil encontrados:', !!profileData);
-        if (profileData) {
-          const parsedProfile = JSON.parse(profileData);
-          console.log('Perfil carregado:', parsedProfile);
-          this.companyProfile.set(parsedProfile);
-        }
+        this.loadCompanyProfile();
       }
     } catch (error) {
       console.error('Erro ao inicializar OnboardingService:', error);
     }
   }
 
+  private loadCompanyProfile() {
+    console.log('Carregando perfil da empresa do servidor...');
+    this.http.get<CompanyProfile>(`${this.apiUrl}/company-profile`).subscribe({
+      next: (profile) => {
+        console.log('Perfil carregado:', profile);
+        this.companyProfile.set(profile);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar perfil da empresa:', err);
+      }
+    });
+  }
+
   saveCompanyProfile(profile: CompanyProfile) {
-    this.companyProfile.set(profile);
-    localStorage.setItem(this.companyProfileKey, JSON.stringify(profile));
+    this.http.put<CompanyProfile>(`${this.apiUrl}/company-profile`, profile).subscribe({
+      next: (updatedProfile) => {
+        this.companyProfile.set(updatedProfile);
+      },
+      error: (err) => console.error('Erro ao salvar perfil da empresa:', err)
+    });
   }
 
   completeOnboarding() {
