@@ -1,0 +1,42 @@
+<main class="p-4 sm:p-6 lg:p-8">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Insights da IA</h1>
+      <p class="text-slate-500 mt-2 text-base sm:text-lg">Análises e recomendações para otimizar suas finanças.</p>
+    </div>
+    <button (click)="generateInsights()" [disabled]="isLoading()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 disabled:bg-slate-300 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.animate-spin]="isLoading()"><path d="M12 3v6l3-3-3 3-3-3 3 3V3zM12 18v-6l-3 3 3-3 3 3-3-3v6z"/><path d="M3 12h6l-3 3 3-3-3-3-3 3h6zM18 12h-6l3 3-3-3 3-3 3 3h-6z"/></svg>
+      <span>{{ isLoading() ? 'Analisando...' : 'Gerar Novos Insights' }}</span>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (_ of [1, 2, 3]; track $index) {
+        <app-skeleton-loader></app-skeleton-loader>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="text-center p-12 bg-white rounded-xl border-2 border-dashed border-red-300">
+      <div class="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+      </div>
+      <h3 class="mt-5 text-xl font-semibold text-slate-800">Ocorreu um Erro</h3>
+      <p class="mt-2 text-slate-500">{{ error() }}</p>
+    </div>
+  } @else if (insights().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (insight of insights(); track insight.title) {
+        <app-ai-insight-card [insight]="insight"></app-ai-insight-card>
+      }
+    </div>
+  } @else {
+    <div class="text-center p-12 bg-white rounded-xl border-2 border-dashed border-slate-300">
+      <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M12 3v6l3-3-3 3-3-3 3 3V3zM12 18v-6l-3 3 3-3 3 3-3-3v6z"/><path d="M3 12h6l-3 3 3-3-3-3-3 3h6zM18 12h-6l3 3-3-3 3-3 3 3h-6z"/></svg>
+      </div>
+      <h3 class="mt-5 text-xl font-semibold text-slate-800">Nenhum insight gerado</h3>
+      <p class="mt-2 text-slate-500">Clique no botão acima para que a IA analise seus dados e gere novas recomendações.</p>
+    </div>
+  }
+</main>

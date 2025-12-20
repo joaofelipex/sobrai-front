@@ -12,7 +12,7 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    const apiKey = process.env.API_KEY || '';
+    const apiKey = environment.geminiApiKey;
     if (!apiKey) {
       console.error("API Key for Gemini is not configured.");
     }
@@ -20,7 +20,7 @@ export class GeminiService {
   }
 
   async generateFinancialInsights(profile: CompanyProfile, transactions: Transaction[]): Promise<Insight[]> {
-    if (!this.ai || !process.env.API_KEY) {
+    if (!this.ai || !environment.geminiApiKey) {
         return Promise.resolve([
             { 
               title: 'Economia através de otimização fiscal',
