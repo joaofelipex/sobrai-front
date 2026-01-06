@@ -79,17 +79,24 @@ export class InvoicesComponent implements OnInit {
   }
 
   saveInvoice() {
-    let formValue = this.newInvoiceForm();
-    if (this.isAddingNewClient()) {
-      const newClient = this.clientService.addClient(this.newClientForm());
-      formValue.clientId = newClient.id;
-    }
+    const formValue = this.newInvoiceForm();
 
-    if (!formValue.clientId || !formValue.description || formValue.amount <= 0 || !formValue.issueDate) {
-      return;
+    const performSave = (finalInvoiceData: Omit<Invoice, 'id' | 'taxAmount' | 'status'>) => {
+        if (!finalInvoiceData.clientId || !finalInvoiceData.description || finalInvoiceData.amount <= 0 || !finalInvoiceData.issueDate) {
+            return;
+        }
+        this.invoiceService.addInvoice(finalInvoiceData);
+        this.closeModal();
+    };
+
+    if (this.isAddingNewClient()) {
+        this.clientService.addClient(this.newClientForm()).subscribe(newClient => {
+            const updatedFormValue = { ...formValue, clientId: newClient.id };
+            performSave(updatedFormValue);
+        });
+    } else {
+        performSave(formValue);
     }
-    this.invoiceService.addInvoice(formValue);
-    this.closeModal();
   }
   
   updateStatus(id: string, status: 'paid' | 'canceled') {

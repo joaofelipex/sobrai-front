@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../models/client.model';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -28,12 +29,11 @@ export class ClientService {
     return this.clients().find(c => c.id === id);
   }
 
-  addClient(clientData: Omit<Client, 'id'>): void {
-    this.http.post<Client>(`${this.apiUrl}/clients`, clientData).subscribe({
-      next: (newClient) => {
+  addClient(clientData: Omit<Client, 'id'>): Observable<Client> {
+    return this.http.post<Client>(`${this.apiUrl}/clients`, clientData).pipe(
+      tap((newClient) => {
         this.clients.update(clients => [...clients, newClient].sort((a, b) => a.name.localeCompare(b.name)));
-      },
-      error: (err) => console.error('Failed to add client', err)
-    });
+      })
+    );
   }
 }

@@ -21,6 +21,47 @@ export class DashboardComponent implements OnInit {
   private invoiceService = inject(InvoiceService);
   private goalService = inject(GoalService);
 
+  // Period selection
+  selectedPeriod = signal<'month' | 'year'>('month');
+
+  // Current time
+  currentTime = computed(() => {
+    return new Date().toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  });
+
+  // Period subtitle
+  periodSubtitle = computed(() => {
+    return this.selectedPeriod() === 'month' ? 'Este mês' : 'Este ano';
+  });
+
+  // Check if has transactions
+  hasTransactions = computed(() => {
+    return this.transactionService.transactions().length > 0;
+  });
+
+  // Period summary
+  periodSummary = computed(() => {
+    const revenue = this.transactionService.totalRevenue();
+    const expenses = this.transactionService.totalExpenses();
+    return {
+      revenue,
+      expenses,
+      profit: revenue - expenses
+    };
+  });
+
+  // Chart preview data
+  chartPreview = computed(() => {
+    const history = this.balanceHistory();
+    return history.slice(-5).map((item, index) => ({
+      label: `Dia ${index + 1}`,
+      profit: item.balance || 0
+    }));
+  });
+
   companyProfile = this.onboardingService.companyProfile;
   userName = computed(() => {
     const profile = this.companyProfile();
@@ -97,5 +138,9 @@ export class DashboardComponent implements OnInit {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
+  }
+
+  setPeriod(period: 'month' | 'year'): void {
+    this.selectedPeriod.set(period);
   }
 }
