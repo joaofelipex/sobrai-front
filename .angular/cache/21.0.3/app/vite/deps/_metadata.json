@@ -1,61 +1,61 @@
 {
-  "hash": "3ac819b4",
+  "hash": "bc981a77",
   "configHash": "5473fb3d",
-  "lockfileHash": "ca3a12fd",
-  "browserHash": "221f73ce",
+  "lockfileHash": "fb53dc70",
+  "browserHash": "ed58f251",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "0d23ae3f",
+      "fileHash": "27667a80",
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
-      "fileHash": "79eed041",
+      "fileHash": "cfe7a262",
       "needsInterop": false
     },
     "@angular/compiler": {
       "src": "../../../../../../node_modules/@angular/compiler/fesm2022/compiler.mjs",
       "file": "@angular_compiler.js",
-      "fileHash": "91e138d1",
+      "fileHash": "5c031c55",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "4b9558c5",
+      "fileHash": "fc2218a8",
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
-      "fileHash": "e580f392",
+      "fileHash": "f501eebd",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "4ccd0799",
+      "fileHash": "9affb16b",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "a57ecd5e",
+      "fileHash": "cf02ea8c",
       "needsInterop": false
     },
     "@google/genai": {
       "src": "../../../../../../node_modules/@google/genai/dist/web/index.mjs",
       "file": "@google_genai.js",
-      "fileHash": "ca3a12fd",
+      "fileHash": "751f35bb",
       "needsInterop": false
     },
     "rxjs": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
       "file": "rxjs.js",
-      "fileHash": "872a572e",
+      "fileHash": "1e586224",
       "needsInterop": false
     }
   },
