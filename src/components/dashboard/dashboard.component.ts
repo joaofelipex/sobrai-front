@@ -14,6 +14,8 @@ import { GoalService } from '../../services/goal.service';
   styles: []
 })
 export class DashboardComponent implements OnInit {
+  protected readonly Math = Math;
+
   private onboardingService = inject(OnboardingService);
   private transactionService = inject(TransactionService);
   private invoiceService = inject(InvoiceService);
