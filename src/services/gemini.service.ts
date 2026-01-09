@@ -20,11 +20,15 @@ export class GeminiService {
   }
 
   async generateFinancialInsights(profile: CompanyProfile, transactions: Transaction[]): Promise<Insight[]> {
+    // Calculate totals before using them
+    const totalRevenue = transactions.filter(t => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0);
+    const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+
     if (!this.ai || !environment.geminiApiKey) {
         return Promise.resolve([
             { 
               title: 'Economia através de otimização fiscal',
-              description: 'Com base em 2 notas fiscais e 50 transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.',
+              description: `Com base em ${transactions.filter(t => t.type === 'expense').length} despesas e ${transactions.length} transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.`,
               icon: 'dollar-sign',
               priority: 'Alta prioridade',
               type: 'economy',
@@ -32,11 +36,11 @@ export class GeminiService {
             },
             {
               title: 'Fluxo de caixa positivo previsto',
-              description: 'Analisando suas 9 receitas e padrões de faturamento, estimo R$ 5.349,89 nos próximos 30 dias.',
+              description: `Analisando suas ${transactions.filter(t => t.type === 'revenue').length} receitas e padrões de faturamento, estimo R$ ${totalRevenue.toLocaleString('pt-BR')} nos próximos 30 dias.`,
               icon: 'trending-up',
               priority: 'Média prioridade',
               type: 'cashflow',
-              estimatedImpact: 'R$ 5.349,89'
+              estimatedImpact: `R$ ${totalRevenue.toLocaleString('pt-BR')}`
             },
             {
               title: 'Lembrete: DAS vence em 5 dias',
@@ -58,8 +62,6 @@ export class GeminiService {
     const companyType = companyTypeMap[profile.type] || 'Pequeno Negócio';
 
     // Create a summary of transactions
-    const totalRevenue = transactions.filter(t => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0);
-    const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
     const expenseByCategory = transactions.filter(t => t.type === 'expense').reduce((acc, t) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
@@ -130,7 +132,7 @@ export class GeminiService {
        return Promise.resolve([
             { 
               title: 'Economia através de otimização fiscal',
-              description: 'Com base em 2 notas fiscais e 50 transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.',
+              description: `Com base em ${transactions.filter(t => t.type === 'expense').length} despesas e ${transactions.length} transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.`,
               icon: 'dollar-sign',
               priority: 'Alta prioridade',
               type: 'economy',
@@ -138,11 +140,11 @@ export class GeminiService {
             },
             {
               title: 'Fluxo de caixa positivo previsto',
-              description: 'Analisando suas 9 receitas e padrões de faturamento, estimo R$ 5.349,89 nos próximos 30 dias.',
+              description: `Analisando suas ${transactions.filter(t => t.type === 'revenue').length} receitas e padrões de faturamento, estimo R$ ${totalRevenue.toLocaleString('pt-BR')} nos próximos 30 dias.`,
               icon: 'trending-up',
               priority: 'Média prioridade',
               type: 'cashflow',
-              estimatedImpact: 'R$ 5.349,89'
+              estimatedImpact: `R$ ${totalRevenue.toLocaleString('pt-BR')}`
             },
             {
               title: 'Lembrete: DAS vence em 5 dias',

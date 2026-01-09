@@ -37,6 +37,20 @@ export class OnboardingComponent {
     this.currentStep.update(step => step - 1);
   }
 
+  getCompanyTypeName(): string {
+    const type = this.companyTypes.find(t => t.id === this.companyProfile().type);
+    return type ? type.name : '';
+  }
+
+  reviewSettings() {
+    this.currentStep.set(1);
+  }
+
+  viewTutorial() {
+    // Placeholder for tutorial functionality
+    console.log('Tutorial functionality to be implemented');
+  }
+
   finishOnboarding() {
     this.onboardingService.saveCompanyProfile(this.companyProfile());
     this.onboardingService.completeOnboarding();
