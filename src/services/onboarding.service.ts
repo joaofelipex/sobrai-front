@@ -1,14 +1,14 @@
-
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CompanyProfile } from '../models/company.model';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnboardingService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = `${environment.backendUrl}/api`;
   
   private storageKey = 'sobrai_onboarding_complete_v1';
   private firstRunKey = 'sobrai_first_run_complete_v1';
