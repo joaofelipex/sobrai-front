@@ -1,13 +1,14 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Transaction } from '../models/transaction.model';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = `${environment.backendUrl}/api`;
 
   transactions = signal<Transaction[]>([]);
 
