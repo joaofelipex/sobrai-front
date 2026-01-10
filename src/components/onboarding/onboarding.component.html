@@ -1,5 +1,5 @@
 <div class="flex items-center justify-center min-h-screen bg-gray-50 p-4 font-sans">
-  <div class="w-full max-w-2xl mx-auto transition-all duration-500">
+  <div class="w-full max-w-lg mx-auto transition-all duration-500">
     <div class="text-center mb-8">
       <h1 class="text-4xl font-bold text-emerald-700 tracking-tight">
         Bem-vindo à <span class="text-gray-800">Sobrai</span>
@@ -7,7 +7,7 @@
       <p class="text-gray-500 mt-3 text-lg">Vamos organizar suas finanças e liberar seu tempo. Leva só 2 minutos!</p>
     </div>
 
-    <div class="relative bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-lg mx-auto">
+    <div class="relative bg-white rounded-2xl shadow-xl p-6 sm:p-8">
       <!-- Progress Bar -->
       <div class="w-full bg-gray-200 rounded-full h-2.5 mb-10">
         <div class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500 ease-out" [style.width.%]="(currentStep() - 1) * 33.33 + (currentStep() > 3 ? 100 : 0)"></div>
