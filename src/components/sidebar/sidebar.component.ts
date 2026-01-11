@@ -4,12 +4,19 @@ import { Router, RouterModule } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
 import { OnboardingService } from '../../services/onboarding.service';
 
+/**
+ * Interface para definir a estrutura de um item de navegação.
+ */
 interface NavItem {
   path: string;
   label: string;
   icon: string;
 }
 
+/**
+ * Componente da barra lateral (sidebar).
+ * Gerencia a exibição e o comportamento do menu de navegação principal.
+ */
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -18,14 +25,18 @@ interface NavItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  // Injeção de dependências dos serviços necessários.
   sidebarService = inject(SidebarService);
   onboardingService = inject(OnboardingService);
   private readonly router = inject(Router);
 
+  // Signal que controla o estado de abertura/fechamento do sidebar.
   isOpen = this.sidebarService.isOpen;
 
+  // Signal computado que obtém o nome do usuário/empresa do serviço de onboarding.
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
 
+  // Array com os itens de navegação do menu.
   navItems: NavItem[] = [
     { path: 'painel-principal', label: 'Painel Principal', icon: 'grid' },
     { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: 'receipt' },
@@ -40,13 +51,21 @@ export class SidebarComponent {
     { path: 'configuracoes', label: 'Configurações', icon: 'settings' },
   ];
 
+  /**
+   * Fecha o sidebar chamando o método correspondente no SidebarService.
+   */
   closeSidebar() {
     this.sidebarService.close();
   }
 
+  /**
+   * Realiza o logout do usuário.
+   * Limpa os dados da aplicação do localStorage, reseta os signals de estado
+   * e redireciona para a página inicial.
+   */
   logout(): void {
     try {
-      // Remove apenas dados do app (evita apagar storage de outros sites/projetos)
+      // Remove apenas as chaves do localStorage que começam com 'sobrai_' para evitar apagar dados de outras aplicações.
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -58,14 +77,16 @@ export class SidebarComponent {
         localStorage.removeItem(key);
       }
 
-      // Reseta estado em memória
+      // Reseta os signals de estado do onboarding para o estado inicial.
       this.onboardingService.companyProfile.set(null);
       this.onboardingService.isOnboardingComplete.set(false);
 
+      // Fecha o sidebar e navega para a página inicial.
       this.closeSidebar();
       void this.router.navigateByUrl('/');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
+      // Garante que o usuário seja deslogado mesmo em caso de erro.
       this.closeSidebar();
       void this.router.navigateByUrl('/');
     }

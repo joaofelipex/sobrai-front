@@ -5,12 +5,24 @@ import { Insight } from '../models/insight.model';
 import { CompanyProfile } from '../models/company.model';
 import { Transaction } from '../models/transaction.model';
 
+/**
+ * Serviço para integração com a API do Google Gemini.
+ *
+ * Responsável por configurar o cliente da API e gerar insights financeiros
+ * com base nos dados do usuário, como perfil da empresa e transações.
+ * Em caso de falha ou falta da chave de API, retorna dados mocados.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class GeminiService {
   private ai: GoogleGenAI;
 
+  /**
+   * Construtor do serviço.
+   * Inicializa o cliente da API do Google Gemini com a chave fornecida
+   * no arquivo de ambiente. Exibe um erro no console se a chave não estiver configurada.
+   */
   constructor() {
     const apiKey = environment.geminiApiKey;
     if (!apiKey) {
@@ -19,14 +31,30 @@ export class GeminiService {
     this.ai = new GoogleGenAI({ apiKey });
   }
 
+  /**
+   * Gera insights financeiros acionáveis usando o modelo de IA do Gemini.
+   *
+   * Constrói um prompt detalhado com o perfil da empresa e um resumo das transações
+   * recentes e envia para a API do Gemini, esperando uma resposta em formato JSON
+   * contendo uma lista de insights.
+   *
+   * Se a chave da API não estiver configurada ou ocorrer um erro na chamada,
+   * este método retorna uma lista de insights mocados para garantir que a
+   * aplicação continue funcionando.
+   *
+   * @param profile O perfil da empresa do usuário.
+   * @param transactions Uma lista de transações recentes para análise.
+   * @returns Uma `Promise` que resolve para um array de `Insight`.
+   */
   async generateFinancialInsights(profile: CompanyProfile, transactions: Transaction[]): Promise<Insight[]> {
     // Calculate totals before using them
     const totalRevenue = transactions.filter(t => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0);
     const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
 
+    // Fallback to mock data if AI is not configured
     if (!this.ai || !environment.geminiApiKey) {
         return Promise.resolve([
-            { 
+            {
               title: 'Economia através de otimização fiscal',
               description: `Com base em ${transactions.filter(t => t.type === 'expense').length} despesas e ${transactions.length} transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.`,
               icon: 'dollar-sign',
@@ -129,8 +157,9 @@ export class GeminiService {
 
     } catch (error) {
       console.error('Error generating insights with Gemini:', error);
+      // Fallback to mock data in case of an API error
        return Promise.resolve([
-            { 
+            {
               title: 'Economia através de otimização fiscal',
               description: `Com base em ${transactions.filter(t => t.type === 'expense').length} despesas e ${transactions.length} transações, você pode economizar até R$ 450/mês revisando seu enquadramento tributário e otimizando despesas dedutíveis.`,
               icon: 'dollar-sign',

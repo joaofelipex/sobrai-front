@@ -1,5 +1,11 @@
+<!--
+  Container principal da página do dashboard com um fundo em gradiente.
+-->
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100">
-  <!-- Glass-morphism Header -->
+  <!-- 
+    Cabeçalho com efeito "glassmorphism" (transparência e desfoque).
+    Exibe o título da página, uma saudação ao usuário e a hora da última atualização.
+  -->
   <header class="bg-gradient-to-r from-emerald-700 via-green-700 to-emerald-800 shadow-2xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
@@ -24,10 +30,15 @@
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Conteúdo principal -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 -mt-6">
-    <!-- Quick Actions -->
+    <!-- 
+      Seção de Ações Rápidas.
+      Contém botões de atalho para as principais funcionalidades do sistema,
+      como adicionar transação, emitir nota fiscal, criar meta e ver relatórios.
+    -->
     <div class="mb-10 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 transform transition-all duration-300">
+      <!-- Botão: Nova Transação -->
       <a routerLink="/receitas-e-despesas" 
          class="group relative bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden hover:border-emerald-200/70">
          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -44,6 +55,7 @@
         </div>
       </a>
       
+      <!-- Botão: Nova Nota Fiscal -->
       <a routerLink="/notas-fiscais" 
          class="group relative bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden hover:border-amber-200/70">
          <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -60,6 +72,7 @@
         </div>
       </a>
 
+      <!-- Botão: Nova Meta -->
       <a routerLink="/metas" 
          class="group relative bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden hover:border-emerald-200/70">
          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -76,6 +89,7 @@
         </div>
       </a>
 
+      <!-- Botão: Relatórios -->
       <a routerLink="/relatorios" 
          class="group relative bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden hover:border-violet-200/70">
          <div class="absolute inset-0 bg-gradient-to-br from-violet-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -93,7 +107,11 @@
       </a>
     </div>
 
-    <!-- Metrics Grid -->
+    <!-- 
+      Grid de Métricas.
+      Exibe os principais indicadores financeiros (KPIs) em cards.
+      Usa um loop `@for` para iterar sobre as métricas computadas no componente.
+    -->
     <div class="mb-10">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-2 sm:space-y-0">
         <div>
@@ -113,6 +131,7 @@
             <app-metric-card [metric]="metric" [link]="metric.link"></app-metric-card>
           </div>
         } @empty {
+          <!-- Estado de vazio: exibido quando não há métricas para mostrar -->
           <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 shadow-sm">
             <p class="text-slate-500">Nenhuma métrica disponível no momento.</p>
           </div>
@@ -120,11 +139,15 @@
       </div>
     </div>
 
-    <!-- Main Content Grid -->
+    <!-- Grid principal do conteúdo -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left Column -->
+      <!-- Coluna da Esquerda (ocupa 2/3 da largura em telas grandes) -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Balance Chart -->
+        <!-- 
+          Card: Gráfico de Saldo.
+          Mostra a evolução do saldo financeiro com um seletor de período (mensal/anual).
+          Exibe um resumo de receitas, despesas e lucro, e uma pré-visualização do gráfico.
+        -->
         <div class="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
           <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/40 to-green-50/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
           <div class="flex items-center justify-between mb-6">
@@ -132,6 +155,7 @@
               <h3 class="text-lg font-semibold text-slate-800">Desempenho Financeiro</h3>
               <p class="text-sm text-slate-500">{{ periodSubtitle() }}</p>
             </div>
+            <!-- Seletor de Período -->
             <div class="flex items-center space-x-1 bg-emerald-50/80 p-1 rounded-lg border border-emerald-100/60">
               <button
                 (click)="setPeriod('month')"
@@ -170,7 +194,12 @@
               </svg>
             </a>
           </div>
+          <!-- 
+            Exibição condicional: mostra os dados se houver transações, 
+            caso contrário, exibe um estado de vazio incentivando o usuário a adicionar dados.
+          -->
           @if (hasTransactions()) {
+            <!-- Resumo do período em cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div class="bg-gradient-to-br from-emerald-50/80 to-white rounded-xl border border-emerald-100/70 shadow-sm p-4">
                 <p class="text-xs font-semibold text-slate-500">Receitas</p>
@@ -185,6 +214,7 @@
                 <p class="text-lg font-bold text-emerald-800 mt-1">{{ formatCurrency(periodSummary().profit) }}</p>
               </div>
             </div>
+            <!-- Pré-visualização do gráfico em formato de lista -->
             <div class="h-64 bg-slate-50/70 rounded-xl border border-slate-200/60 shadow-inner p-4 overflow-auto">
               <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-semibold text-slate-700">Preview do período</p>
@@ -202,6 +232,7 @@
               </div>
             </div>
           } @else {
+            <!-- Estado de vazio para o gráfico -->
             <div class="text-center py-16">
               <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-white to-slate-50 border border-slate-100 shadow-inner mb-4 animate-pulse">
                 <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,7 +249,11 @@
           }
         </div>
 
-        <!-- Goal Progress Section -->
+        <!-- 
+          Card: Progresso da Meta de Receita.
+          Exibido apenas se uma meta de receita estiver definida (`@if`).
+          Mostra uma barra de progresso em direção à meta.
+        -->
         @if (revenueGoal(); as goal) {
           <div class="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
             <h3 class="text-lg font-bold text-slate-800 mb-4">{{goal.name}}</h3>
@@ -235,8 +270,9 @@
         }
       </div>
 
-      <!-- Right Column -->
+      <!-- Coluna da Direita (ocupa 1/3 da largura em telas grandes) -->
       <div class="space-y-6">
+        <!-- Card: Insights da IA -->
         <div class="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
           <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/30 to-green-100/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
           <div class="flex items-center justify-between mb-4">
@@ -261,6 +297,10 @@
           </div>
         </div>
         
+        <!-- 
+          Card de placeholder para os Insights da IA.
+          Incentiva o usuário a visitar a página dedicada de insights.
+        -->
         <div class="text-center py-12 bg-white/95 rounded-xl border border-slate-200/60 shadow-sm">
           <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 mb-4">
             <svg class="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">

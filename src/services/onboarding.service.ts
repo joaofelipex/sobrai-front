@@ -3,26 +3,40 @@ import { HttpClient } from '@angular/common/http';
 import { CompanyProfile } from '../models/company.model';
 import { environment } from '../environments/environment';
 
+/**
+ * Serviço para gerenciar o processo de onboarding (primeiro uso) do usuário.
+ *
+ * Controla se o usuário já completou o setup inicial, gerencia o perfil da empresa
+ * e persiste o estado de onboarding no `localStorage` para garantir que o usuário
+ * não precise refazer o processo a cada visita.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class OnboardingService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.backendUrl}/api`;
-  
+
   private storageKey = 'sobrai_onboarding_complete_v1';
   private firstRunKey = 'sobrai_first_run_complete_v1';
 
+  /** Sinal (Signal) que indica se o processo de onboarding foi concluído. */
   isOnboardingComplete = signal<boolean>(false);
+
+  /** Sinal (Signal) que armazena os dados do perfil da empresa. */
   companyProfile = signal<CompanyProfile | null>(null);
 
+  /**
+   * Inicializa o serviço, verificando o status de onboarding no `localStorage`.
+   * Se o onboarding estiver completo, carrega os dados do perfil da empresa.
+   */
   initialize() {
     console.log('Inicializando OnboardingService...');
     try {
       const isComplete = localStorage.getItem(this.storageKey) === 'true';
       console.log('Onboarding completo?', isComplete);
       this.isOnboardingComplete.set(isComplete);
-      
+
       if (isComplete) {
         this.loadCompanyProfile();
       }
@@ -31,6 +45,10 @@ export class OnboardingService {
     }
   }
 
+  /**
+   * Carrega os dados do perfil da empresa a partir da API backend.
+   * @private
+   */
   private loadCompanyProfile() {
     console.log('Carregando perfil da empresa do servidor...');
     this.http.get<CompanyProfile>(`${this.apiUrl}/company-profile`).subscribe({
@@ -44,6 +62,10 @@ export class OnboardingService {
     });
   }
 
+  /**
+   * Salva (atualiza) os dados do perfil da empresa na API backend.
+   * @param profile O objeto de perfil da empresa a ser salvo.
+   */
   saveCompanyProfile(profile: CompanyProfile) {
     this.http.put<CompanyProfile>(`${this.apiUrl}/company-profile`, profile).subscribe({
       next: (updatedProfile) => {
@@ -53,6 +75,11 @@ export class OnboardingService {
     });
   }
 
+  /**
+   * Marca o processo de onboarding como concluído.
+   * Salva o estado no `localStorage` e atualiza o `signal` `isOnboardingComplete`.
+   * Só conclui se o perfil da empresa já estiver definido.
+   */
   completeOnboarding() {
     if (this.companyProfile()) {
       localStorage.setItem(this.storageKey, 'true');
@@ -60,10 +87,19 @@ export class OnboardingService {
     }
   }
 
+  /**
+   * Verifica se é a primeira vez que o usuário executa a aplicação.
+   * Útil para exibir telas de boas-vindas ou tutoriais.
+   * @returns `true` se for a primeira execução, `false` caso contrário.
+   */
   isFirstRun(): boolean {
     return localStorage.getItem(this.firstRunKey) === null;
   }
 
+  /**
+   * Marca que a primeira execução da aplicação foi concluída.
+   * Isso impede que as telas de boas-vindas sejam exibidas novamente.
+   */
   markFirstRunComplete() {
     localStorage.setItem(this.firstRunKey, 'true');
   }

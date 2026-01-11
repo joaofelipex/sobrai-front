@@ -1,12 +1,19 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionService } from '../../../services/transaction.service';
-import { Transaction } from '../../../models/transaction.model';
 import { LineChartComponent } from '../../shared/chart/line-chart.component';
 import { BarChartComponent } from '../../shared/chart/bar-chart.component';
 
+/**
+ * Define os tipos de período de tempo para a análise financeira.
+ */
 type Period = 'month' | 'quarter' | 'year';
 
+/**
+ * Componente para a página de análise financeira.
+ * Exibe gráficos e métricas detalhadas sobre as finanças do usuário,
+ * permitindo a filtragem por período (mês, trimestre, ano).
+ */
 @Component({
   selector: 'app-financial-analysis',
   standalone: true,
@@ -17,8 +24,13 @@ type Period = 'month' | 'quarter' | 'year';
 export class FinancialAnalysisComponent {
   private transactionService = inject(TransactionService);
 
+  /** Sinal (Signal) que armazena o período de tempo selecionado para a análise. */
   selectedPeriod = signal<Period>('month');
 
+  /**
+   * Sinal computado (Computed Signal) que filtra as transações com base no período selecionado.
+   * @returns Um array de transações filtradas.
+   */
   filteredTransactions = computed(() => {
     const all = this.transactionService.transactions();
     const now = new Date();
@@ -40,10 +52,20 @@ export class FinancialAnalysisComponent {
     return all.filter(t => new Date(t.date) >= startDate);
   });
 
+  /** Sinal computado que calcula a receita total para o período filtrado. */
   totalRevenue = computed(() => this.filteredTransactions().filter(t => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0));
+  
+  /** Sinal computado que calcula a despesa total para o período filtrado. */
   totalExpenses = computed(() => this.filteredTransactions().filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0));
+  
+  /** Sinal computado que calcula o lucro líquido (receitas - despesas) para o período filtrado. */
   netProfit = computed(() => this.totalRevenue() - this.totalExpenses());
 
+  /**
+   * Sinal computado que prepara os dados para o gráfico de barras de despesas por categoria.
+   * Agrupa as despesas por categoria e as ordena da maior para a menor.
+   * @returns Um array de objetos com `name` (categoria) e `value` (total).
+   */
   expenseByCategoryChartData = computed(() => {
     const expenses = this.filteredTransactions().filter(t => t.type === 'expense');
     const categoryMap = expenses.reduce((acc, t) => {
@@ -56,11 +78,17 @@ export class FinancialAnalysisComponent {
       .sort((a, b) => b.value - a.value);
   });
 
+  /**
+   * Sinal computado que prepara os dados para o gráfico de linhas de Receitas vs. Despesas.
+   * Agrupa as transações por dia (para visualização mensal/trimestral) ou por mês (para visualização anual)
+   * e formata os dados para serem consumidos pelo componente de gráfico.
+   * @returns Um objeto contendo `labels` e `datasets` para o gráfico.
+   */
   revenueVsExpensesChartData = computed(() => {
     const transactions = this.filteredTransactions();
     const period = this.selectedPeriod();
-    const formatLabel = (date: Date) => {
-      if (period === 'year') return date.toLocaleString('default', { month: 'short' });
+    const formatLabel = (date: Date): string => {
+      if (period === 'year') return date.toLocaleString('pt-BR', { month: 'short' });
       return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
     };
 
@@ -68,6 +96,7 @@ export class FinancialAnalysisComponent {
 
     transactions.forEach(t => {
       const date = new Date(t.date);
+      // Agrupa por mês se a visualização for anual, caso contrário, por dia.
       const key = (period === 'year') 
         ? new Date(date.getFullYear(), date.getMonth(), 1).toISOString()
         : date.toISOString().split('T')[0];
@@ -109,6 +138,10 @@ export class FinancialAnalysisComponent {
     };
   });
 
+  /**
+   * Define o período de tempo para a análise.
+   * @param period O novo período a ser definido ('month', 'quarter', ou 'year').
+   */
   setPeriod(period: Period) {
     this.selectedPeriod.set(period);
   }

@@ -1,10 +1,17 @@
+<!--
+  Container principal da página de Análise Financeira.
+-->
 <main class="p-4 sm:p-6 lg:p-8">
-  <!-- Header -->
+  <!--
+    Cabeçalho da página.
+    Contém o título e o seletor de período (mês, trimestre, ano).
+  -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
     <div>
       <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Análise Financeira</h1>
       <p class="text-slate-500 mt-2 text-base sm:text-lg">Aprofunde-se nos números do seu negócio.</p>
     </div>
+    <!-- Seletor de Período -->
     <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
       <button (click)="setPeriod('month')" class="px-3 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="selectedPeriod() === 'month'" [class.shadow-sm]="selectedPeriod() === 'month'" [class.text-slate-800]="selectedPeriod() === 'month'" [class.text-slate-500]="selectedPeriod() !== 'month'">Este Mês</button>
       <button (click)="setPeriod('quarter')" class="px-3 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="selectedPeriod() === 'quarter'" [class.shadow-sm]="selectedPeriod() === 'quarter'" [class.text-slate-800]="selectedPeriod() === 'quarter'" [class.text-slate-500]="selectedPeriod() !== 'quarter'">Trimestre</button>
@@ -12,35 +19,56 @@
     </div>
   </div>
 
+  <!--
+    Container principal do conteúdo.
+    Exibe os dados se houver transações filtradas para o período,
+    caso contrário, mostra um estado de vazio.
+  -->
   @if (filteredTransactions().length > 0) {
-    <!-- KPIs -->
+    <!--
+      Cards de KPIs (Key Performance Indicators).
+      Exibem os principais indicadores do período: Receita, Despesa e Lucro.
+    -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <!-- Card: Receita Total -->
       <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
         <h3 class="text-slate-500 font-semibold">Receita Total</h3>
-        <p class="text-3xl font-bold text-success-600 mt-2">{{ totalRevenue().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+        <p class="text-3xl font-bold text-emerald-600 mt-2">{{ totalRevenue().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
       </div>
+      <!-- Card: Despesa Total -->
        <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
         <h3 class="text-slate-500 font-semibold">Despesa Total</h3>
         <p class="text-3xl font-bold text-red-600 mt-2">{{ totalExpenses().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
       </div>
+      <!-- Card: Lucro Líquido -->
       <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
         <h3 class="text-slate-500 font-semibold">Lucro Líquido</h3>
         <p class="text-3xl font-bold mt-2" [class.text-slate-800]="netProfit() >= 0" [class.text-red-600]="netProfit() < 0">{{ netProfit().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
       </div>
     </div>
 
-    <!-- Charts -->
+    <!--
+      Seção de Gráficos.
+      Contém o gráfico de despesas por categoria e o de receitas vs. despesas.
+    -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Gráfico de Despesas por Categoria -->
        <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
         <h3 class="text-lg font-semibold text-slate-800 mb-4">Despesas por Categoria</h3>
         <app-bar-chart [data]="expenseByCategoryChartData()"></app-bar-chart>
       </div>
-            <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
+      <!-- Gráfico de Receitas vs. Despesas -->
+      <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6">
         <h3 class="text-lg font-semibold text-slate-800 mb-4">Receitas vs. Despesas</h3>
         <app-line-chart [data]="revenueVsExpensesChartData()"></app-line-chart>
       </div>
     </div>
   } @else {
+    <!--
+      Estado de Vazio.
+      Exibido quando não há transações para o período selecionado.
+      Incentiva o usuário a adicionar mais dados.
+    -->
     <div class="text-center py-16 px-6 bg-white rounded-xl border-2 border-dashed border-slate-300">
       <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
