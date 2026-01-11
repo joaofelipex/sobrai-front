@@ -1,4 +1,7 @@
-<!-- Backdrop for mobile -->
+<!-- Backdrop para mobile -->
+<!-- Fica visível em dispositivos móveis para escurecer o conteúdo principal quando o sidebar está aberto. -->
+<!-- A opacidade e a interação são controladas pelo estado 'isOpen()'. -->
+<!-- O clique no backdrop fecha o sidebar. -->
 <div 
   class="fixed inset-0 bg-black/30 z-30 transition-opacity md:hidden"
   [class.opacity-100]="isOpen()"
@@ -9,6 +12,7 @@
 </div>
 
 <!-- Sidebar -->
+<!-- A classe 'translate-x-0' (visível) ou '-translate-x-full' (oculto) é aplicada com base no estado 'isOpen()'. -->
 <aside 
   class="fixed top-0 left-0 w-64 h-full bg-gradient-to-b from-emerald-800 via-green-800 to-emerald-900 flex flex-col z-40
          transition-transform duration-300 ease-in-out
@@ -16,7 +20,8 @@
   [class.translate-x-0]="isOpen()"
   [class.-translate-x-full]="!isOpen()">
 
-  <!-- Logo and Close Button for Mobile -->
+  <!-- Logo e Botão de Fechar para Mobile -->
+  <!-- Contém o logo da aplicação e o botão para fechar o sidebar em dispositivos móveis. -->
   <div class="h-20 flex items-center justify-between px-6 border-b border-white/10">
     <div class="flex items-center space-x-3">
       <div class="p-2 bg-green-500/20 rounded-lg">
@@ -27,15 +32,21 @@
         <p class="text-xs text-green-400 font-semibold">Fiscal e Financeiro</p>
       </div>
     </div>
+    <!-- Botão de fechar, visível apenas em telas menores que 'md'. -->
     <button (click)="closeSidebar()" class="md:hidden p-2 rounded-md text-emerald-100 hover:bg-emerald-700/60">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navegação Principal -->
+  <!-- Itera sobre os itens de navegação (navItems) para construir o menu. -->
   <nav class="flex-1 p-4 space-y-1">
     <p class="px-4 pt-2 pb-2 text-xs font-semibold text-emerald-200 uppercase">Menu</p>
     @for (item of navItems; track item.path) {
+      <!-- Cada item é um link de roteamento. -->
+      <!-- 'routerLinkActive' aplica classes CSS quando a rota está ativa. -->
+      <!-- 'routerLinkActiveOptions' com 'exact: true' garante que a classe ativa seja aplicada apenas para correspondências exatas de rota. -->
+      <!-- 'closeSidebar()' é chamado ao clicar em um item para fechar o menu em dispositivos móveis. -->
       <a
         [routerLink]="['/', item.path]"
         routerLinkActive="bg-emerald-600 text-white"
@@ -43,6 +54,7 @@
         (click)="closeSidebar()"
         class="flex items-center px-4 py-2.5 text-emerald-100 rounded-lg hover:bg-emerald-700/40 hover:text-white transition-colors duration-200 font-medium"
       >
+        <!-- Renderização condicional do ícone SVG com base na propriedade 'item.icon'. -->
         @if (item.icon === 'grid') {
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
         } @else if (item.icon === 'receipt') {
@@ -71,7 +83,8 @@
     }
   </nav>
 
-  <!-- IA Ativa Card -->
+  <!-- Card de IA Ativa -->
+  <!-- Um card informativo que indica que a funcionalidade de IA está ativa. -->
   <div class="p-4 mt-auto">
     <div class="p-4 bg-green-500/20 rounded-lg text-center">
       <div class="flex items-center justify-center space-x-2">
@@ -82,12 +95,15 @@
     </div>
   </div>
 
-  <!-- User Profile -->
+  <!-- Perfil do Usuário -->
+  <!-- Exibe o nome do usuário e um botão de logout. -->
   <div class="p-4 border-t border-white/10">
     <div class="flex items-center">
       <div class="flex-1">
+        <!-- O nome do usuário é exibido e truncado se for muito longo. -->
         <p class="text-sm font-semibold text-white truncate" [title]="userName()">{{ userName() }}</p>
       </div>
+      <!-- Botão para chamar a função de logout. -->
       <button type="button" (click)="logout()" class="p-2 rounded-md text-emerald-100 hover:bg-emerald-700/60">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
       </button>
