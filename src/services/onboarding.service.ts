@@ -67,11 +67,17 @@ export class OnboardingService {
    * @param profile O objeto de perfil da empresa a ser salvo.
    */
   saveCompanyProfile(profile: CompanyProfile) {
+    console.log('Tentando salvar perfil da empresa no backend:', profile);
     this.http.put<CompanyProfile>(`${this.apiUrl}/company-profile`, profile).subscribe({
       next: (updatedProfile) => {
+        console.log('Perfil salvo com sucesso no backend:', updatedProfile);
         this.companyProfile.set(updatedProfile);
       },
-      error: (err) => console.error('Erro ao salvar perfil da empresa:', err)
+      error: (err) => {
+        console.warn('Erro ao salvar perfil da empresa no backend (backend pode estar offline):', err);
+        // Não falha completamente se o backend estiver offline
+        // O perfil já foi definido no signal localmente
+      }
     });
   }
 
@@ -81,9 +87,14 @@ export class OnboardingService {
    * Só conclui se o perfil da empresa já estiver definido.
    */
   completeOnboarding() {
-    if (this.companyProfile()) {
+    // Verifica se o perfil da empresa está definido no signal
+    const profile = this.companyProfile();
+    if (profile) {
       localStorage.setItem(this.storageKey, 'true');
       this.isOnboardingComplete.set(true);
+      console.log('Onboarding marcado como completo para:', profile.name);
+    } else {
+      console.error('Não foi possível completar o onboarding: perfil da empresa não encontrado');
     }
   }
 
