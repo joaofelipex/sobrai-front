@@ -12,7 +12,7 @@
       <!-- A largura da barra de progresso é calculada dinamicamente com base no passo atual do onboarding. -->
       <!-- A cada passo, a barra avança em 33.33%. Se o número de passos for maior que 3, a barra de progresso será de 100% -->
       <div class="w-full bg-gray-200 rounded-full h-2.5 mb-10">
-        <div class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500 ease-out" [style.width.%]="(currentStep() - 1) * 33.33 + (currentStep() > 3 ? 100 : 0)"></div>
+        <div class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500 ease-out" [style.width.%]="getProgressPercentage()"></div>
       </div>
 
       <!-- Etapa 1: Nome da Empresa -->
