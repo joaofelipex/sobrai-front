@@ -168,5 +168,6 @@ export class DashboardComponent implements OnInit {
    */
   setPeriod(period: 'month' | 'year'): void {
     this.selectedPeriod.set(period);
+    console.log('Período selecionado:', period);
   }
 }

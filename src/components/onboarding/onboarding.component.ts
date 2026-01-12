@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { OnboardingService } from '../../services/onboarding.service';
 import { CompanyProfile } from '../../models/company.model';
 
@@ -17,6 +18,7 @@ import { CompanyProfile } from '../../models/company.model';
   changeDetection: ChangeDetectionStrategy.OnPush // Estratégia de detecção de alterações para otimização de performance.
 })
 export class OnboardingComponent {
+  private router = inject(Router);
   // Injeção de dependência do serviço de onboarding.
   onboardingService = inject(OnboardingService);
   // Signal para controlar o passo atual do formulário de onboarding.
@@ -35,6 +37,30 @@ export class OnboardingComponent {
     { id: 'simples', name: 'Simples Nacional', description: 'Para micro e pequenas empresas.' },
     { id: 'autonomo', name: 'Autônomo', description: 'Para profissionais sem CNPJ.' }
   ];
+
+  /**
+   * Atualiza o nome da empresa no estado do perfil da empresa.
+   * @param name O novo nome da empresa.
+   */
+  onNameChange(name: string) {
+    this.companyProfile.update(profile => ({ ...profile, name }));
+  }
+
+  /**
+   * Atualiza o tipo de empresa no estado do perfil da empresa.
+   * @param type O novo tipo de empresa.
+   */
+  onTypeChange(type: 'mei' | 'simples' | 'autonomo') {
+    this.companyProfile.update(profile => ({ ...profile, type }));
+  }
+
+  /**
+   * Atualiza o faturamento mensal no estado do perfil da empresa.
+   * @param revenue O novo faturamento mensal.
+   */
+  onRevenueChange(revenue: number) {
+    this.companyProfile.update(profile => ({ ...profile, monthlyRevenue: revenue }));
+  }
 
   /**
    * Avança para o próximo passo do onboarding.
@@ -83,11 +109,12 @@ export class OnboardingComponent {
   }
 
   /**
-   * Finaliza o processo de onboarding, salvando os dados do perfil da empresa
-   * e marcando o onboarding como completo através do OnboardingService.
+   * Finaliza o processo de onboarding, salvando os dados do perfil da empresa,
+   * marcando o onboarding como completo e navegando para o painel principal.
    */
   finishOnboarding() {
     this.onboardingService.saveCompanyProfile(this.companyProfile());
     this.onboardingService.completeOnboarding();
+    this.router.navigate(['/painel-principal']);
   }
 }
