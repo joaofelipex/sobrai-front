@@ -25,7 +25,8 @@
           <input
             id="companyName"
             type="text"
-            [(ngModel)]="companyProfile().name"
+            [ngModel]="companyProfile().name"
+            (ngModelChange)="onNameChange($event)"
             placeholder="Ex: João Silva Serviços"
             class="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition duration-300"
           />
@@ -49,7 +50,7 @@
             @for (type of companyTypes; track type.id) {
               <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 shadow-sm" [class.border-emerald-500]="companyProfile().type === type.id" [class.ring-2]="companyProfile().type === type.id" [class.ring-emerald-500/50]="companyProfile().type === type.id" [class.bg-emerald-50/50]="companyProfile().type === type.id" [class.border-gray-200]="companyProfile().type !== type.id" [class.hover:border-emerald-400]="companyProfile().type !== type.id">
                 <!-- Input do tipo rádio, com two-way data binding para a propriedade companyProfile().type. -->
-                <input type="radio" name="companyType" [value]="type.id" [(ngModel)]="companyProfile().type" class="hidden" />
+                <input type="radio" name="companyType" [value]="type.id" [ngModel]="companyProfile().type" (ngModelChange)="onTypeChange($event)" class="hidden" />
                 <div class="flex-1">
                   <span class="font-bold text-gray-800">{{ type.name }}</span>
                   <p class="text-sm text-gray-500">{{ type.description }}</p>
@@ -78,7 +79,8 @@
               id="monthlyRevenue"
               type="number"
               step="100"
-              [(ngModel)]="companyProfile().monthlyRevenue"
+              [ngModel]="companyProfile().monthlyRevenue"
+              (ngModelChange)="onRevenueChange($event)"
               class="w-full pl-12 pr-4 py-3 text-lg bg-gray-100 border-2 border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition duration-300"
             />
           </div>
