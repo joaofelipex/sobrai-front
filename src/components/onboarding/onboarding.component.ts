@@ -113,8 +113,25 @@ export class OnboardingComponent {
    * marcando o onboarding como completo e navegando para o painel principal.
    */
   finishOnboarding() {
-    this.onboardingService.saveCompanyProfile(this.companyProfile());
+    console.log('Botão "Acessar meu painel" clicado!');
+    console.log('Perfil da empresa:', this.companyProfile());
+    
+    // Primeiro, define o perfil no serviço para garantir que esteja disponível
+    this.onboardingService.companyProfile.set(this.companyProfile());
+    
+    // Tenta salvar o perfil no backend, mas não espera pela resposta
+    // para não bloquear a navegação caso o backend esteja indisponível
+    try {
+      this.onboardingService.saveCompanyProfile(this.companyProfile());
+    } catch (error) {
+      console.warn('Não foi possível salvar o perfil no backend (backend pode estar offline):', error);
+    }
+    
+    // Marca o onboarding como completo independentemente do backend
     this.onboardingService.completeOnboarding();
+    
+    console.log('Navegando para /painel-principal...');
+    // Navega para o painel principal
     this.router.navigate(['/painel-principal']);
   }
 }
