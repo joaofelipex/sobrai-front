@@ -75,6 +75,14 @@ export class OnboardingComponent {
   }
 
   /**
+   * Calcula a porcentagem de progresso do onboarding.
+   * @returns A porcentagem de progresso (0-100)
+   */
+  getProgressPercentage(): number {
+    return Math.min((this.currentStep() - 1) * 33.33, 100);
+  }
+
+  /**
    * Finaliza o processo de onboarding, salvando os dados do perfil da empresa
    * e marcando o onboarding como completo através do OnboardingService.
    */
