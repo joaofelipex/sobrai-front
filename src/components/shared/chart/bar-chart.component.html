@@ -1,21 +1,24 @@
-
-@if(data().length > 0) {
-<div class="w-full h-64 flex items-end justify-around space-x-2">
-  @for (item of data(); track item.name) {
-    <div class="flex-1 flex flex-col items-center">
-      <div class="w-full h-full flex items-end">
-        <div 
-            class="w-full bg-emerald-300 rounded-t-md hover:bg-emerald-400 transition-colors"
+@if (data().length > 0) {
+  <div class="w-full h-56 sm:h-64 flex items-stretch gap-2 sm:gap-3">
+    @for (item of data(); track item.name) {
+      <div class="flex-1 min-w-0 flex flex-col">
+        <p class="text-[11px] sm:text-xs font-medium text-slate-600 text-center mb-1 tabular truncate">
+          {{ item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }) }}
+        </p>
+        <div class="flex-1 flex items-end">
+          <div
+            class="w-full bg-emerald-600 rounded-t hover:bg-emerald-700 transition-colors"
             [style.height]="getBarHeight(item.value)"
-            [title]="item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })">
+            [style.min-height.px]="item.value > 0 ? 2 : 0"
+            [title]="item.name + ': ' + item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })">
+          </div>
         </div>
+        <span class="text-[11px] sm:text-xs text-slate-500 mt-2 text-center truncate" [title]="item.name">{{ item.name }}</span>
       </div>
-      <span class="text-xs text-gray-500 mt-2 truncate">{{ item.name }}</span>
-    </div>
-  }
-</div>
+    }
+  </div>
 } @else {
-  <div class="w-full h-64 flex items-center justify-center text-gray-400">
+  <div class="w-full h-48 flex items-center justify-center text-sm text-slate-400">
     Sem dados para exibir.
   </div>
 }

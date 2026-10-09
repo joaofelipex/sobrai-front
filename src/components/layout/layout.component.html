@@ -4,9 +4,11 @@
   <div class="flex-1 min-w-0">
     <app-header></app-header>
 
-    <main>
+    <!-- No celular, reserva espaço para a barra inferior (+ área segura do aparelho). -->
+    <main class="pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <router-outlet></router-outlet>
     </main>
   </div>
 </div>
+<app-bottom-nav></app-bottom-nav>
 <app-toast></app-toast>

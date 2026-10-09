@@ -60,19 +60,19 @@
         <table class="w-full text-sm text-left text-slate-500">
           <thead class="text-xs text-slate-700 uppercase bg-slate-50">
             <tr>
-              <th scope="col" class="px-6 py-4">Data</th>
-              <th scope="col" class="px-6 py-4">Plano</th>
-              <th scope="col" class="px-6 py-4 text-right">Valor</th>
-              <th scope="col" class="px-6 py-4 text-center">Status</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Data</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Plano</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-right">Valor</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             @for(item of billingHistory(); track item.date) {
               <tr class="bg-white border-b border-slate-200/80 last:border-b-0">
-                <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{{ item.date | date:'dd/MM/yyyy' }}</td>
-                <td class="px-6 py-4">{{ item.planName }}</td>
-                <td class="px-6 py-4 text-right font-semibold text-slate-800">{{ item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</td>
-                <td class="px-6 py-4 text-center">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 font-medium text-slate-900 whitespace-nowrap">{{ item.date | date:'dd/MM/yyyy' }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4">{{ item.planName }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-right font-semibold text-slate-800">{{ item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-center">
                   <span class="px-2 py-1 text-xs font-semibold rounded-full"
                         [class.bg-success-100]="item.status === 'paid'" [class.text-success-800]="item.status === 'paid'"
                         [class.bg-red-100]="item.status === 'failed'" [class.text-red-800]="item.status === 'failed'">

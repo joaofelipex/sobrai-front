@@ -1,0 +1,21 @@
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-20 bg-white border-t border-slate-200 pb-[env(safe-area-inset-bottom)]" aria-label="Navegação principal">
+  <ul class="grid grid-cols-5">
+    @for (tab of tabs; track tab.path) {
+      <li>
+        <a [routerLink]="['/', tab.path]"
+           routerLinkActive="text-emerald-700"
+           class="flex flex-col items-center justify-center gap-0.5 h-14 text-slate-500 active:bg-slate-100">
+          <lucide-icon [img]="tab.icon" [size]="21" [strokeWidth]="1.75"></lucide-icon>
+          <span class="text-[11px] font-medium leading-none">{{ tab.label }}</span>
+        </a>
+      </li>
+    }
+    <li>
+      <button type="button" (click)="sidebar.toggle()"
+              class="w-full flex flex-col items-center justify-center gap-0.5 h-14 text-slate-500 active:bg-slate-100">
+        <lucide-icon [img]="menuIcon" [size]="21" [strokeWidth]="1.75"></lucide-icon>
+        <span class="text-[11px] font-medium leading-none">Menu</span>
+      </button>
+    </li>
+  </ul>
+</nav>
