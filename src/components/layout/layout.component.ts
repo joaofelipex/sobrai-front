@@ -4,12 +4,11 @@ import { RouterModule } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { ToastComponent } from '../shared/toast/toast.component';
-import { AiFabComponent } from '../shared/ai-fab/ai-fab.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent, HeaderComponent, ToastComponent, AiFabComponent],
+  imports: [CommonModule, RouterModule, SidebarComponent, HeaderComponent, ToastComponent],
   templateUrl: './layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

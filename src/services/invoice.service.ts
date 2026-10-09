@@ -1,5 +1,5 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 import { OnboardingService } from './onboarding.service';
@@ -154,6 +154,8 @@ export class InvoiceService {
 
   private fail(action: string, err: unknown) {
     console.error(`Falha ao ${action}`, err);
-    this.toastService.showError(`Não foi possível ${action}.`);
+    // O backend explica o motivo nos conflitos (ex: nota com NFS-e autorizada).
+    const reason = err instanceof HttpErrorResponse && err.status === 409 ? err.error?.message : null;
+    this.toastService.showError(reason || `Não foi possível ${action}.`);
   }
 }

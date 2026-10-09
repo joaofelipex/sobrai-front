@@ -18,7 +18,7 @@ export const routes: Routes = [
     { path: 'integracao-bancaria', component: BankIntegrationComponent, title: 'Integração Bancária | Sobrai' },
     { path: 'notas-fiscais', component: InvoicesComponent, title: 'Notas Fiscais | Sobrai' },
     { path: 'analise-financeira', component: FinancialAnalysisComponent, title: 'Análise Financeira | Sobrai' },
-    { path: 'insights-ia', component: AiInsightsPageComponent, title: 'Insights da IA | Sobrai' },
+    { path: 'insights-ia', component: AiInsightsPageComponent, title: 'Insights | Sobrai' },
     { path: 'metas', component: GoalsComponent, title: 'Metas | Sobrai' },
     { path: 'recorrencias', component: RecurringComponent, title: 'Recorrências | Sobrai' },
     { path: 'relatorios', component: ReportsComponent, title: 'Relatórios | Sobrai' },

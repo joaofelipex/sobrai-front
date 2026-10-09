@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { OnboardingService } from '../../../services/onboarding.service';
 import { CompanyProfile } from '../../../models/company.model';
 import { ToastService } from '../../../services/toast.service';
+import { NfseSettingsComponent } from './nfse-settings.component';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NfseSettingsComponent],
   templateUrl: './settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

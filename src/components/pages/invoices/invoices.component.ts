@@ -3,6 +3,8 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { ClientService } from '../../../services/client.service';
+import { NfseService } from '../../../services/nfse.service';
+import { NfseDocument } from '../../../models/nfse.model';
 import { Invoice } from '../../../models/invoice.model';
 import { Client } from '../../../models/client.model';
 
@@ -21,6 +23,10 @@ export class InvoicesComponent implements OnInit {
 
   isModalOpen = signal(false);
   invoicePendingDelete = signal<string | null>(null);
+  nfseService = inject(NfseService);
+  nfseToCancel = signal<NfseDocument | null>(null);
+  cancelCode = signal<'1' | '2' | '9'>('1');
+  cancelText = signal('');
   filter = signal<'all' | 'issued' | 'paid' | 'canceled'>('all');
   isAddingNewClient = signal(false);
 
@@ -102,6 +108,23 @@ export class InvoicesComponent implements OnInit {
   
   updateStatus(id: string, status: 'paid' | 'canceled') {
     this.invoiceService.updateInvoiceStatus(id, status);
+  }
+
+  openNfseCancel(doc: NfseDocument) {
+    this.cancelCode.set('1');
+    this.cancelText.set('');
+    this.nfseToCancel.set(doc);
+  }
+
+  async confirmNfseCancel() {
+    const doc = this.nfseToCancel();
+    if (!doc) return;
+    const ok = await this.nfseService.cancel(doc, this.cancelCode(), this.cancelText().trim());
+    if (ok) {
+      // O backend também marca a nota fiscal como cancelada; recarrega a lista local.
+      this.invoiceService.invoices.update(list => list.map(i => i.id === doc.invoiceId ? { ...i, status: 'canceled' } : i));
+      this.nfseToCancel.set(null);
+    }
   }
 
   confirmDeleteInvoice() {

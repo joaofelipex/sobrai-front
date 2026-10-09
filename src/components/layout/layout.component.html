@@ -1,23 +1,12 @@
-<div class="relative min-h-screen md:flex bg-slate-100">
-  <!-- Sidebar -->
+<div class="min-h-screen md:flex bg-slate-100">
   <app-sidebar></app-sidebar>
 
-  <!-- Content Area -->
-  <div class="flex-1">
-    <!-- Mobile Header -->
+  <div class="flex-1 min-w-0">
     <app-header></app-header>
-    
-    <main class="overflow-y-auto">
-      <!-- TESTE: Router Outlet -->
-      <div style="background: blue; color: white; padding: 10px; margin: 10px;">
-        Router Outlet está aqui - Componente abaixo:
-      </div>
+
+    <main>
       <router-outlet></router-outlet>
-      <div style="background: green; color: white; padding: 10px; margin: 10px;">
-        Router Outlet acima
-      </div>
     </main>
   </div>
 </div>
 <app-toast></app-toast>
-<app-ai-fab></app-ai-fab>

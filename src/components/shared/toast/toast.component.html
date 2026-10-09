@@ -2,7 +2,7 @@
 <div class="fixed top-4 right-4 z-[100] space-y-3 w-full max-w-sm">
   @for (toast of toasts(); track toast.id) {
     <div 
-      class="toast-item flex items-center p-4 rounded-xl shadow-lg text-white"
+      class="toast-item flex items-center p-4 rounded-lg shadow-sm text-white"
       [ngClass]="{
         'bg-green-500': toast.type === 'success',
         'bg-red-500': toast.type === 'error',
