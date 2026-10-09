@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Goal } from '../models/goal.model';
+import { ToastService } from './toast.service';
 import { environment } from '../environments/environment';
 
 /**
@@ -15,6 +16,7 @@ import { environment } from '../environments/environment';
 })
 export class GoalService {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   private apiUrl = `${environment.backendUrl}/api`;
 
   /**
@@ -42,7 +44,10 @@ export class GoalService {
       next: (data) => {
         this.goals.set(data);
       },
-      error: (err) => console.error('Failed to load goals from server', err)
+      error: (err) => {
+        console.error('Failed to load goals from server', err);
+        this.toastService.showError('Não foi possível carregar as metas.');
+      }
     });
   }
 
@@ -65,7 +70,43 @@ export class GoalService {
       next: (newGoal) => {
         this.goals.update(goals => [...goals, newGoal]);
       },
-      error: (err) => console.error('Failed to add goal', err)
+      error: (err) => {
+        console.error('Failed to add goal', err);
+        this.toastService.showError('Não foi possível criar a meta.');
+      }
+    });
+  }
+
+  /**
+   * Atualiza uma meta existente.
+   * @param goal A meta com os dados atualizados.
+   */
+  updateGoal(goal: Goal): void {
+    this.http.put<Goal>(`${this.apiUrl}/goals/${goal.id}`, goal).subscribe({
+      next: (saved) => {
+        this.goals.update(goals => goals.map(g => g.id === saved.id ? saved : g));
+        this.toastService.show('Meta atualizada com sucesso!');
+      },
+      error: (err) => {
+        console.error('Failed to update goal', err);
+        this.toastService.showError('Não foi possível atualizar a meta.');
+      }
+    });
+  }
+
+  /**
+   * Exclui uma meta pelo ID.
+   */
+  deleteGoal(id: string): void {
+    this.http.delete(`${this.apiUrl}/goals/${id}`).subscribe({
+      next: () => {
+        this.goals.update(goals => goals.filter(g => g.id !== id));
+        this.toastService.show('Meta excluída.', 'info');
+      },
+      error: (err) => {
+        console.error('Failed to delete goal', err);
+        this.toastService.showError('Não foi possível excluir a meta.');
+      }
     });
   }
 }

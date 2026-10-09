@@ -57,9 +57,8 @@
                   @if(invoice.status === 'issued') {
                     <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-emerald-700 hover:underline">Marcar como Paga</button>
                     <button (click)="updateStatus(invoice.id, 'canceled')" class="font-medium text-red-600 hover:underline">Cancelar</button>
-                  } @else {
-                    <span class="text-slate-400">-</span>
                   }
+                  <button (click)="invoicePendingDelete.set(invoice.id)" class="font-medium text-slate-500 hover:text-red-600 hover:underline">Excluir</button>
                 </td>
               </tr>
             }
@@ -75,6 +74,19 @@
   </div>
 
   <!-- Add Invoice Modal -->
+  @if (invoicePendingDelete()) {
+    <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="invoicePendingDelete.set(null)">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-semibold text-slate-800">Excluir nota fiscal?</h3>
+        <p class="mt-2 text-sm text-slate-500">A nota e a receita gerada por ela serão removidas permanentemente.</p>
+        <div class="pt-6 flex justify-end space-x-3">
+          <button type="button" (click)="invoicePendingDelete.set(null)" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
+          <button type="button" (click)="confirmDeleteInvoice()" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">Excluir</button>
+        </div>
+      </div>
+    </div>
+  }
+
   @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">

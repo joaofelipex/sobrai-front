@@ -1,28 +1,33 @@
-import { Injectable, signal, effect, inject, computed } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 import { OnboardingService } from './onboarding.service';
 import { TransactionService } from './transaction.service';
 import { ToastService } from './toast.service';
 import { ClientService } from './client.service';
+import { environment } from '../environments/environment';
 
 /**
  * Serviço para gerenciar as notas fiscais (faturas).
  *
- * Responsável por carregar, salvar, adicionar e atualizar notas fiscais.
- * Persiste os dados no `localStorage` e se integra com outros serviços
- * como `TransactionService` para criar transações de receita correspondentes
- * e `ToastService` para notificar o usuário.
+ * Responsável por carregar, adicionar, atualizar e excluir notas fiscais na API backend.
+ * Se integra com o `TransactionService` para criar a transação de receita correspondente
+ * e com o `ToastService` para notificar o usuário.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-  private storageKey = 'sobrai_invoices_v1';
+  /** Chave antiga do localStorage, usada apenas para migrar dados para o backend. */
+  private legacyStorageKey = 'sobrai_invoices_v1';
+  private apiUrl = `${environment.backendUrl}/api/invoices`;
 
   /** Sinal (Signal) que armazena a lista de notas fiscais. */
   invoices = signal<Invoice[]>([]);
 
   // Injeção de dependências de outros serviços.
+  private http = inject(HttpClient);
   onboardingService = inject(OnboardingService);
   transactionService = inject(TransactionService);
   toastService = inject(ToastService);
@@ -30,7 +35,6 @@ export class InvoiceService {
 
   /**
    * `computed` que calcula o valor total de impostos das notas fiscais emitidas (não canceladas).
-   * Este valor é recalculado automaticamente sempre que a lista de `invoices` muda.
    */
   totalTaxesIssued = computed(() =>
     this.invoices()
@@ -38,43 +42,48 @@ export class InvoiceService {
       .reduce((sum, inv) => sum + inv.taxAmount, 0)
   );
 
-  /**
-   * Construtor do serviço.
-   * Carrega as notas fiscais do `localStorage` e configura um `effect`
-   * para salvar as notas automaticamente sempre que o `signal` `invoices` for modificado.
-   */
   constructor() {
-    this.loadInvoicesFromStorage();
-    effect(() => {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.invoices()));
-    });
+    void this.load();
   }
 
-  /**
-   * Carrega as notas fiscais armazenadas no `localStorage`.
-   * @private
-   */
-  private loadInvoicesFromStorage() {
-    const data = localStorage.getItem(this.storageKey);
-    if (data) {
-      this.invoices.set(JSON.parse(data));
+  /** Carrega do servidor e migra, uma única vez, dados antigos do `localStorage`. */
+  private async load(): Promise<void> {
+    try {
+      let items = await firstValueFrom(this.http.get<Invoice[]>(this.apiUrl));
+      const legacy = this.readLegacy();
+      if (legacy.length > 0) {
+        await this.migrateLegacy(legacy);
+        items = await firstValueFrom(this.http.get<Invoice[]>(this.apiUrl));
+      }
+      this.invoices.set(items);
+    } catch (err) {
+      console.error('Falha ao carregar notas fiscais do servidor', err);
     }
   }
 
-  /**
-   * Ordena uma lista de notas fiscais pela data de emissão, da mais recente para a mais antiga.
-   * @param invoices O array de notas fiscais a ser ordenado.
-   * @returns O array de notas fiscais ordenado.
-   * @private
-   */
-  private sortInvoices(invoices: Invoice[]): Invoice[] {
-    return invoices.sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime());
+  private readLegacy(): Invoice[] {
+    try {
+      const data = localStorage.getItem(this.legacyStorageKey);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  /** Envia as notas do localStorage para o backend (que gera novos IDs). */
+  private async migrateLegacy(legacy: Invoice[]) {
+    const clients = await firstValueFrom(this.http.get<{ id: string }[]>(`${environment.backendUrl}/api/clients`));
+    const knownClients = new Set(clients.map(c => c.id));
+    for (const { id: _id, ...inv } of legacy) {
+      if (!knownClients.has(inv.clientId)) continue; // cliente inexistente: o backend recusaria
+      await firstValueFrom(this.http.post<Invoice>(this.apiUrl, inv));
+    }
+    localStorage.removeItem(this.legacyStorageKey);
   }
 
   /**
    * Busca uma nota fiscal pelo seu ID.
    * @param id O ID da nota fiscal a ser buscada.
-   * @returns A nota fiscal encontrada ou `undefined`.
    */
   getInvoiceById(id: string): Invoice | undefined {
     return this.invoices().find(inv => inv.id === id);
@@ -83,52 +92,68 @@ export class InvoiceService {
   /**
    * Adiciona uma nova nota fiscal.
    * - Calcula o imposto com base no perfil da empresa.
-   * - Cria a nota fiscal com um ID único e status 'issued'.
-   * - Adiciona a nota à lista e a ordena.
-   * - Cria uma transação de receita correspondente usando o `TransactionService`.
-   * - Exibe uma notificação de sucesso.
+   * - Salva a nota no backend e, em caso de sucesso, cria a transação de receita correspondente.
    * @param invoiceData Os dados da nota fiscal, sem os campos `id`, `taxAmount` e `status`.
    */
   addInvoice(invoiceData: Omit<Invoice, 'id' | 'taxAmount' | 'status'>) {
     const profile = this.onboardingService.companyProfile();
-    // Define a taxa de imposto com base no tipo de empresa
     const taxRate = profile ? { mei: 0.05, simples: 0.06, autonomo: 0.115 }[profile.type] : 0.08;
     const taxAmount = invoiceData.amount * taxRate;
 
-    const newInvoice: Invoice = {
-      ...invoiceData,
-      id: self.crypto.randomUUID(),
-      taxAmount,
-      status: 'issued',
-    };
+    this.http.post<Invoice>(this.apiUrl, { ...invoiceData, taxAmount, status: 'issued' }).subscribe({
+      next: (newInvoice) => {
+        this.invoices.update(invoices => this.sortInvoices([...invoices, newInvoice]));
 
-    this.invoices.update(invoices => this.sortInvoices([...invoices, newInvoice]));
+        const client = this.clientService.getClientById(newInvoice.clientId);
+        this.transactionService.addTransaction({
+          type: 'revenue',
+          description: `Nota Fiscal: ${client ? client.name : 'Cliente desconhecido'}`,
+          amount: newInvoice.amount,
+          date: newInvoice.issueDate,
+          category: 'Prestação de Serviço',
+          invoiceId: newInvoice.id,
+        });
 
-    const client = this.clientService.getClientById(newInvoice.clientId);
-    const clientName = client ? client.name : 'Cliente desconhecido';
-
-    // Integração: Cria uma transação de receita correspondente
-    this.transactionService.addTransaction({
-      type: 'revenue',
-      description: `Nota Fiscal: ${clientName}`,
-      amount: newInvoice.amount,
-      date: newInvoice.issueDate,
-      category: 'Prestação de Serviço',
-      invoiceId: newInvoice.id,
+        this.toastService.show('Nota Fiscal emitida com sucesso!');
+      },
+      error: (err) => this.fail('emitir a nota fiscal', err)
     });
-
-    this.toastService.show('Nota Fiscal emitida com sucesso!');
   }
 
   /**
    * Atualiza o status de uma nota fiscal para 'paga' ou 'cancelada'.
-   * @param id O ID da nota fiscal a ser atualizada.
-   * @param status O novo status da nota fiscal.
    */
   updateInvoiceStatus(id: string, status: 'paid' | 'canceled') {
-     this.invoices.update(invoices =>
-      invoices.map(inv => inv.id === id ? { ...inv, status } : inv)
-    );
-    this.toastService.show(`Nota Fiscal marcada como ${status === 'paid' ? 'Paga' : 'Cancelada'}.`, 'info');
+    this.http.patch<Invoice>(`${this.apiUrl}/${id}`, { status }).subscribe({
+      next: (saved) => {
+        this.invoices.update(invoices => invoices.map(inv => inv.id === id ? saved : inv));
+        this.toastService.show(`Nota Fiscal marcada como ${status === 'paid' ? 'Paga' : 'Cancelada'}.`, 'info');
+      },
+      error: (err) => this.fail('atualizar a nota fiscal', err)
+    });
+  }
+
+  /**
+   * Exclui uma nota fiscal. O backend também remove a receita gerada por ela,
+   * então a lista local de transações é atualizada para refletir isso.
+   */
+  deleteInvoice(id: string) {
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => {
+        this.invoices.update(invoices => invoices.filter(inv => inv.id !== id));
+        this.transactionService.transactions.update(ts => ts.filter(t => t.invoiceId !== id));
+        this.toastService.show('Nota Fiscal excluída.', 'info');
+      },
+      error: (err) => this.fail('excluir a nota fiscal', err)
+    });
+  }
+
+  private sortInvoices(invoices: Invoice[]): Invoice[] {
+    return invoices.sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime());
+  }
+
+  private fail(action: string, err: unknown) {
+    console.error(`Falha ao ${action}`, err);
+    this.toastService.showError(`Não foi possível ${action}.`);
   }
 }

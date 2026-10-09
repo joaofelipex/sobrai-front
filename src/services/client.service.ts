@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../models/client.model';
 import { Observable, tap } from 'rxjs';
+import { ToastService } from './toast.service';
 import { environment } from '../environments/environment';
 
 /**
@@ -16,6 +17,7 @@ import { environment } from '../environments/environment';
 })
 export class ClientService {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   private apiUrl = `${environment.backendUrl}/api`;
 
   /**
@@ -43,7 +45,10 @@ export class ClientService {
       next: (data) => {
         this.clients.set(data);
       },
-      error: (err) => console.error('Failed to load clients from server', err)
+      error: (err) => {
+        console.error('Failed to load clients from server', err);
+        this.toastService.showError('Não foi possível carregar os clientes.');
+      }
     });
   }
 
@@ -68,6 +73,29 @@ export class ClientService {
       tap((newClient) => {
         this.clients.update(clients => [...clients, newClient].sort((a, b) => a.name.localeCompare(b.name)));
       })
+    );
+  }
+
+  /**
+   * Atualiza um cliente existente.
+   * @returns Um `Observable` que emite o cliente salvo pelo backend.
+   */
+  updateClient(client: Client): Observable<Client> {
+    return this.http.put<Client>(`${this.apiUrl}/clients/${client.id}`, client).pipe(
+      tap((saved) => {
+        this.clients.update(clients =>
+          clients.map(c => c.id === saved.id ? saved : c).sort((a, b) => a.name.localeCompare(b.name))
+        );
+      })
+    );
+  }
+
+  /**
+   * Exclui um cliente. O backend recusa (409) se ele tiver notas fiscais.
+   */
+  deleteClient(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/clients/${id}`).pipe(
+      tap(() => this.clients.update(clients => clients.filter(c => c.id !== id)))
     );
   }
 }

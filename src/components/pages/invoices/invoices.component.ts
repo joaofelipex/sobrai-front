@@ -20,6 +20,7 @@ export class InvoicesComponent implements OnInit {
   datePipe = inject(DatePipe);
 
   isModalOpen = signal(false);
+  invoicePendingDelete = signal<string | null>(null);
   filter = signal<'all' | 'issued' | 'paid' | 'canceled'>('all');
   isAddingNewClient = signal(false);
 
@@ -101,6 +102,12 @@ export class InvoicesComponent implements OnInit {
   
   updateStatus(id: string, status: 'paid' | 'canceled') {
     this.invoiceService.updateInvoiceStatus(id, status);
+  }
+
+  confirmDeleteInvoice() {
+    const id = this.invoicePendingDelete();
+    if (id) this.invoiceService.deleteInvoice(id);
+    this.invoicePendingDelete.set(null);
   }
 
   setFilter(filter: 'all' | 'issued' | 'paid' | 'canceled') {
