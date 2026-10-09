@@ -12,7 +12,7 @@
       <p class="text-sm text-slate-500 mt-0.5">Aprofunde-se nos números do seu negócio.</p>
     </div>
     <!-- Seletor de Período -->
-    <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
+    <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-slate-100 p-1 rounded-lg max-w-full overflow-x-auto">
       <button (click)="setPeriod('month')" class="px-3 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="selectedPeriod() === 'month'" [class.shadow-sm]="selectedPeriod() === 'month'" [class.text-slate-800]="selectedPeriod() === 'month'" [class.text-slate-500]="selectedPeriod() !== 'month'">Este Mês</button>
       <button (click)="setPeriod('quarter')" class="px-3 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="selectedPeriod() === 'quarter'" [class.shadow-sm]="selectedPeriod() === 'quarter'" [class.text-slate-800]="selectedPeriod() === 'quarter'" [class.text-slate-500]="selectedPeriod() !== 'quarter'">Trimestre</button>
       <button (click)="setPeriod('year')" class="px-3 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="selectedPeriod() === 'year'" [class.shadow-sm]="selectedPeriod() === 'year'" [class.text-slate-800]="selectedPeriod() === 'year'" [class.text-slate-500]="selectedPeriod() !== 'year'">Este Ano</button>

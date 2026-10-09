@@ -16,34 +16,34 @@
     <div class="p-6 border-b border-slate-200/80">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h3 class="text-xl font-semibold text-slate-800">Histórico de Emissões</h3>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
-          <button (click)="setFilter('all')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'all'" [class.shadow-sm]="filter() === 'all'" [class.text-slate-800]="filter() === 'all'" [class.text-slate-500]="filter() !== 'all'">Todas</button>
-          <button (click)="setFilter('issued')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'issued'" [class.shadow-sm]="filter() === 'issued'" [class.text-slate-800]="filter() === 'issued'" [class.text-slate-500]="filter() !== 'issued'">Emitidas</button>
-          <button (click)="setFilter('paid')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'paid'" [class.shadow-sm]="filter() === 'paid'" [class.text-slate-800]="filter() === 'paid'" [class.text-slate-500]="filter() !== 'paid'">Pagas</button>
-          <button (click)="setFilter('canceled')" class="px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'canceled'" [class.shadow-sm]="filter() === 'canceled'" [class.text-slate-800]="filter() === 'canceled'" [class.text-slate-500]="filter() !== 'canceled'">Canceladas</button>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-1 bg-slate-100 p-1 rounded-lg max-w-full overflow-x-auto">
+          <button (click)="setFilter('all')" class="whitespace-nowrap px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'all'" [class.shadow-sm]="filter() === 'all'" [class.text-slate-800]="filter() === 'all'" [class.text-slate-500]="filter() !== 'all'">Todas</button>
+          <button (click)="setFilter('issued')" class="whitespace-nowrap px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'issued'" [class.shadow-sm]="filter() === 'issued'" [class.text-slate-800]="filter() === 'issued'" [class.text-slate-500]="filter() !== 'issued'">Emitidas</button>
+          <button (click)="setFilter('paid')" class="whitespace-nowrap px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'paid'" [class.shadow-sm]="filter() === 'paid'" [class.text-slate-800]="filter() === 'paid'" [class.text-slate-500]="filter() !== 'paid'">Pagas</button>
+          <button (click)="setFilter('canceled')" class="whitespace-nowrap px-3 py-1.5 text-sm font-semibold rounded-md" [class.bg-white]="filter() === 'canceled'" [class.shadow-sm]="filter() === 'canceled'" [class.text-slate-800]="filter() === 'canceled'" [class.text-slate-500]="filter() !== 'canceled'">Canceladas</button>
         </div>
       </div>
     </div>
     
     <div class="overflow-x-auto">
       @if (filteredInvoices().length > 0) {
-        <table class="w-full text-sm text-left text-slate-500">
+        <table class="hidden lg:table w-full text-sm text-left text-slate-500">
           <thead class="text-xs text-slate-700 uppercase bg-slate-50">
             <tr>
-              <th scope="col" class="px-6 py-4">Cliente</th>
-              <th scope="col" class="px-6 py-4">Data</th>
-              <th scope="col" class="px-6 py-4">Status</th>
-              <th scope="col" class="px-6 py-4 text-right">Valor</th>
-              <th scope="col" class="px-6 py-4">NFS-e</th>
-              <th scope="col" class="px-6 py-4 text-center">Ações</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Cliente</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Data</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Status</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-right">Valor</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">NFS-e</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-center">Ações</th>
             </tr>
           </thead>
           <tbody>
             @for (invoice of filteredInvoices(); track invoice.id) {
               <tr class="bg-white border-b border-slate-200/80 hover:bg-slate-50/50">
-                <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{{ invoice.clientName }}</td>
-                <td class="px-6 py-4">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
-                <td class="px-6 py-4">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 font-medium text-slate-900 whitespace-nowrap">{{ invoice.clientName }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4">
                   <span class="px-2 py-1 text-xs font-semibold rounded-full"
                     [class.bg-blue-100]="invoice.status === 'issued'" [class.text-blue-800]="invoice.status === 'issued'"
                     [class.bg-success-100]="invoice.status === 'paid'" [class.text-success-800]="invoice.status === 'paid'"
@@ -51,10 +51,53 @@
                     {{ {issued: 'Emitida', paid: 'Paga', canceled: 'Cancelada'}[invoice.status] }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-right font-semibold text-slate-800">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-right font-semibold text-slate-800">
                   {{ invoice.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
                 </td>
-                <td class="px-6 py-4 min-w-[14rem]">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 min-w-[14rem]">
+                  <ng-container *ngTemplateOutlet="nfseCell; context: { $implicit: invoice }"></ng-container>
+                </td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-center space-x-2">
+                  <ng-container *ngTemplateOutlet="actionsCell; context: { $implicit: invoice }"></ng-container>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Celular: um cartão por nota -->
+        <ul class="lg:hidden divide-y divide-slate-200">
+          @for (invoice of filteredInvoices(); track invoice.id) {
+            <li class="p-4 space-y-3">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="font-medium text-slate-900 truncate">{{ invoice.clientName }}</p>
+                  <p class="text-xs text-slate-500 mt-0.5">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <p class="font-semibold text-slate-900 tabular">{{ invoice.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+                  <span class="mt-1 inline-block px-2 py-0.5 text-xs font-semibold rounded-full"
+                    [class.bg-blue-100]="invoice.status === 'issued'" [class.text-blue-800]="invoice.status === 'issued'"
+                    [class.bg-success-100]="invoice.status === 'paid'" [class.text-success-800]="invoice.status === 'paid'"
+                    [class.bg-slate-100]="invoice.status === 'canceled'" [class.text-slate-700]="invoice.status === 'canceled'">
+                    {{ {issued: 'Emitida', paid: 'Paga', canceled: 'Cancelada'}[invoice.status] }}
+                  </span>
+                </div>
+              </div>
+              @if (invoice.status !== 'canceled' || nfseService.latestByInvoice().get(invoice.id)) {
+                <div class="pt-3 border-t border-slate-100">
+                  <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400 mb-1">NFS-e</p>
+                  <ng-container *ngTemplateOutlet="nfseCell; context: { $implicit: invoice }"></ng-container>
+                </div>
+              }
+              <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm pt-3 border-t border-slate-100">
+                <ng-container *ngTemplateOutlet="actionsCell; context: { $implicit: invoice }"></ng-container>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <ng-template #nfseCell let-invoice>
                   @let doc = nfseService.latestByInvoice().get(invoice.id);
                   @let working = nfseService.busy().has(invoice.id);
                   @if (doc?.status === 'authorized') {
@@ -85,18 +128,16 @@
                       </button>
                     }
                   }
-                </td>
-                <td class="px-6 py-4 text-center space-x-2">
+                
+        </ng-template>
+        <ng-template #actionsCell let-invoice>
                   @if(invoice.status === 'issued') {
                     <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-emerald-700 hover:underline">Marcar como Paga</button>
                     <button (click)="updateStatus(invoice.id, 'canceled')" class="font-medium text-red-600 hover:underline">Cancelar</button>
                   }
                   <button (click)="invoicePendingDelete.set(invoice.id)" class="font-medium text-slate-500 hover:text-red-600 hover:underline">Excluir</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+                
+        </ng-template>
       } @else {
         <div class="text-center p-12">
           <p class="text-slate-500">Nenhuma nota fiscal encontrada.</p>
@@ -109,7 +150,7 @@
   <!-- Add Invoice Modal -->
   @if (nfseToCancel(); as target) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="nfseToCancel.set(null)">
-      <div class="bg-white rounded-lg shadow-sm w-full max-w-md p-6" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <h3 class="text-lg font-semibold text-slate-800">Cancelar NFS-e{{ target.numeroNfse ? ' nº ' + target.numeroNfse : '' }}?</h3>
         <p class="mt-2 text-sm text-slate-500">O cancelamento é registrado na prefeitura/SEFIN e não pode ser desfeito.</p>
         <div class="mt-4 space-y-3">
@@ -137,7 +178,7 @@
 
   @if (invoicePendingDelete()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="invoicePendingDelete.set(null)">
-      <div class="bg-white rounded-lg shadow-sm w-full max-w-sm p-6" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <h3 class="text-lg font-semibold text-slate-800">Excluir nota fiscal?</h3>
         <p class="mt-2 text-sm text-slate-500">A nota e a receita gerada por ela serão removidas permanentemente.</p>
         <div class="pt-6 flex justify-end space-x-3">
@@ -150,7 +191,7 @@
 
   @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
-      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <div class="p-6 border-b border-slate-200/80">
           <h3 class="text-xl font-semibold text-slate-800">Emitir Nova Nota Fiscal</h3>
         </div>

@@ -41,41 +41,41 @@
     <div class="p-6 border-b border-slate-200/80">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h3 class="text-xl font-semibold text-slate-800">Histórico de Transações</h3>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-2 bg-slate-100 p-1 rounded-lg">
-          <button (click)="setFilter('all')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'all'" [class.shadow-sm]="filter() === 'all'" [class.text-slate-800]="filter() === 'all'" [class.text-slate-500]="filter() !== 'all'">Todas</button>
-          <button (click)="setFilter('revenue')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'revenue'" [class.shadow-sm]="filter() === 'revenue'" [class.text-slate-800]="filter() === 'revenue'" [class.text-slate-500]="filter() !== 'revenue'">Receitas</button>
-          <button (click)="setFilter('expense')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'expense'" [class.shadow-sm]="filter() === 'expense'" [class.text-slate-800]="filter() === 'expense'" [class.text-slate-500]="filter() !== 'expense'">Despesas</button>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-2 bg-slate-100 p-1 rounded-lg max-w-full overflow-x-auto">
+          <button (click)="setFilter('all')" class="whitespace-nowrap px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'all'" [class.shadow-sm]="filter() === 'all'" [class.text-slate-800]="filter() === 'all'" [class.text-slate-500]="filter() !== 'all'">Todas</button>
+          <button (click)="setFilter('revenue')" class="whitespace-nowrap px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'revenue'" [class.shadow-sm]="filter() === 'revenue'" [class.text-slate-800]="filter() === 'revenue'" [class.text-slate-500]="filter() !== 'revenue'">Receitas</button>
+          <button (click)="setFilter('expense')" class="whitespace-nowrap px-4 py-1.5 text-sm font-semibold rounded-md transition-colors" [class.bg-white]="filter() === 'expense'" [class.shadow-sm]="filter() === 'expense'" [class.text-slate-800]="filter() === 'expense'" [class.text-slate-500]="filter() !== 'expense'">Despesas</button>
         </div>
       </div>
     </div>
     
     @if (filteredTransactions().length > 0) {
       <!-- Desktop Table -->
-      <div class="overflow-x-auto hidden md:block">
+      <div class="overflow-x-auto hidden lg:block">
         <table class="w-full text-sm text-left text-slate-500">
           <thead class="text-xs text-slate-700 uppercase bg-slate-50">
              <tr>
-              <th scope="col" class="px-6 py-4">Descrição</th>
-              <th scope="col" class="px-6 py-4">Data</th>
-              <th scope="col" class="px-6 py-4">Categoria</th>
-              <th scope="col" class="px-6 py-4 text-right">Valor</th>
-              <th scope="col" class="px-6 py-4 text-center">Ações</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Descrição</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Data</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Categoria</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-right">Valor</th>
+              <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-center">Ações</th>
             </tr>
           </thead>
           <tbody>
             @for (transaction of filteredTransactions(); track transaction.id) {
               <tr class="bg-white border-b border-slate-200/80 last:border-b-0 hover:bg-slate-50/50">
-                <td class="px-6 py-4 font-medium text-slate-900">{{ transaction.description }}</td>
-                <td class="px-6 py-4">{{ transaction.date | date:'dd/MM/yyyy' }}</td>
-                <td class="px-6 py-4">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 font-medium text-slate-900">{{ transaction.description }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4">{{ transaction.date | date:'dd/MM/yyyy' }}</td>
+                <td class="px-3 py-3 sm:px-6 sm:py-4">
                    <span class="px-2 py-1 text-xs font-semibold rounded-full" 
                     [class.bg-blue-100]="transaction.type === 'revenue'" [class.text-blue-800]="transaction.type === 'revenue'"
                     [class.bg-orange-100]="transaction.type === 'expense'" [class.text-orange-800]="transaction.type === 'expense'">{{ transaction.category }}</span>
                 </td>
-                <td class="px-6 py-4 text-right font-semibold" [class.text-success-600]="transaction.type === 'revenue'" [class.text-red-600]="transaction.type === 'expense'">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-right font-semibold" [class.text-success-600]="transaction.type === 'revenue'" [class.text-red-600]="transaction.type === 'expense'">
                   {{ (transaction.type === 'expense' ? '-' : '+') + transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
                 </td>
-                <td class="px-6 py-4 text-center">
+                <td class="px-3 py-3 sm:px-6 sm:py-4 text-center">
                   <button (click)="openModal(transaction.id)" class="p-2 text-slate-500 hover:text-emerald-600 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
                   </button>
@@ -90,7 +90,7 @@
       </div>
       
       <!-- Mobile Cards -->
-      <div class="md:hidden p-4 space-y-4">
+      <div class="lg:hidden p-4 space-y-4">
         @for (transaction of filteredTransactions(); track transaction.id) {
           <div class="bg-slate-50 rounded-lg p-4 border border-slate-200/80 flex">
              <div class="w-1.5 rounded-full mr-4" [class.bg-success-500]="transaction.type === 'revenue'" [class.bg-red-500]="transaction.type === 'expense'"></div>
@@ -136,7 +136,7 @@
   <!-- Modal -->
    @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
-      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <form #form="ngForm" (ngSubmit)="saveTransaction()">
           <div class="p-6 border-b border-slate-200/80">
             <h3 class="text-xl font-semibold text-slate-800">{{ editingTransactionId() ? 'Editar' : 'Adicionar' }} Transação</h3>

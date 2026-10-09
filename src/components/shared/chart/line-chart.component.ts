@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, afterNextRender, inject, input, computed, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface LineChartData {
@@ -6,9 +6,9 @@ interface LineChartData {
   [key: string]: any;
 }
 
-const W = 640;
-const H = 220;
+const DEFAULT_W = 640;
 const PAD = { top: 12, right: 24, bottom: 28, left: 56 };
+const MIN_LABEL_GAP = 58; // px mínimos entre rótulos do eixo X
 
 /** Abrevia valores em reais para o eixo (1,2 mil / 3,4 mi). */
 function shortCurrency(v: number): string {
@@ -36,14 +36,29 @@ function niceStep(range: number, ticks: number): number {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './line-chart.component.html',
+  host: { class: 'block w-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent {
   data = input.required<LineChartData[]>();
   chartColors = input<Record<string, string>>({});
 
-  readonly width = W;
-  readonly height = H;
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Largura real do contêiner em px: o SVG é desenhado nela, então textos mantêm o tamanho em qualquer tela. */
+  width = signal(DEFAULT_W);
+  height = computed(() => (this.width() < 480 ? 190 : 220));
+
+  constructor() {
+    afterNextRender(() => {
+      const el = this.host.nativeElement;
+      const update = () => { const w = Math.round(el.clientWidth); if (w > 0) this.width.set(Math.max(w, 260)); };
+      update();
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      inject(DestroyRef).onDestroy(() => ro.disconnect());
+    });
+  }
 
   keys = computed(() => {
     if (this.data().length === 0) return [];
@@ -74,6 +89,8 @@ export class LineChartComponent {
     min = Math.floor(min / step) * step;
     max = Math.ceil(max / step) * step;
 
+    const W = this.width();
+    const H = this.height();
     const innerW = W - PAD.left - PAD.right;
     const innerH = H - PAD.top - PAD.bottom;
     const x = (i: number) => PAD.left + (i / (data.length - 1)) * innerW;
@@ -89,7 +106,10 @@ export class LineChartComponent {
       last: { x: x(data.length - 1), y: y(Number(data[data.length - 1][key]) || 0) },
     }));
 
-    const labels = data.map((d, i) => ({ x: x(i), y: H - 8, name: d.name }));
+    // Mostra só os rótulos que cabem, distribuídos de forma uniforme (sempre inclui o primeiro e o último).
+    const fit = Math.max(2, Math.min(data.length, Math.floor(innerW / MIN_LABEL_GAP) + 1));
+    const picked = new Set(Array.from({ length: fit }, (_, j) => Math.round((j * (data.length - 1)) / (fit - 1))));
+    const labels = data.map((d, i) => ({ x: x(i), y: H - 8, name: d.name })).filter((_, i) => picked.has(i));
     return { grid, series, labels, left: PAD.left, right: W - PAD.right };
   });
 }

@@ -1,6 +1,6 @@
 @if (chart(); as c) {
   <div class="w-full">
-    <svg [attr.viewBox]="'0 0 ' + width + ' ' + height" class="w-full h-auto" role="img" aria-label="Gráfico de linhas">
+    <svg [attr.viewBox]="'0 0 ' + width() + ' ' + height()" [attr.height]="height()" class="w-full block" role="img" aria-label="Gráfico de linhas">
       @for (g of c.grid; track g.y) {
         <line [attr.x1]="c.left" [attr.x2]="c.right" [attr.y1]="g.y" [attr.y2]="g.y"
               [attr.stroke]="g.zero ? '#94a3b8' : '#e2e8f0'" stroke-width="1" />

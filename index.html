@@ -3,85 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <title>Sobrai | Gestão fiscal e financeira</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          // A paleta "emerald" usada nos templates aponta para o azul-petróleo da marca.
-          // Verde fica reservado ao significado de sucesso/receita (success e green).
-          colors: {
-            emerald: {
-              '50': '#f1f6fa',
-              '100': '#dde9f3',
-              '200': '#bfd4e6',
-              '300': '#92b3d1',
-              '400': '#5f8db8',
-              '500': '#3b6fa0',
-              '600': '#2c5a86',
-              '700': '#254a6e',
-              '800': '#223e5a',
-              '900': '#1f354d',
-              '950': '#14222f',
-            },
-            primary: {
-              '50': '#f1f6fa',
-              '100': '#dde9f3',
-              '200': '#bfd4e6',
-              '300': '#92b3d1',
-              '400': '#5f8db8',
-              '500': '#3b6fa0',
-              '600': '#2c5a86',
-              '700': '#254a6e',
-              '800': '#223e5a',
-              '900': '#1f354d',
-              '950': '#14222f',
-            },
-            success: {
-              '50': '#f0fdf4',
-              '100': '#dcfce7',
-              '200': '#bbf7d0',
-              '300': '#86efac',
-              '400': '#4ade80',
-              '500': '#22c55e',
-              '600': '#16a34a',
-              '700': '#15803d',
-              '800': '#166534',
-              '900': '#14532d',
-              '950': '#052e16',
-            }
-          },
-          borderRadius: {
-            lg: '0.375rem',
-            xl: '0.5rem',
-          }
-        }
-      }
-    }
-  </script>
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  <style>
-    html { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; font-feature-settings: 'cv11', 'ss01'; }
-    body {
-      background-color: #f5f6f8;
-      color: #1e293b;
-      -webkit-font-smoothing: antialiased;
-    }
-    /* Números alinhados em colunas: valores, tabelas e totais. */
-    .tabular, td, th { font-variant-numeric: tabular-nums; }
-    main { animation: page-fade-in 0.15s ease-out; }
-    @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
-    :focus-visible { outline: 2px solid #2c5a86; outline-offset: 2px; }
-    .capitalize-first::first-letter { text-transform: uppercase; }
-  </style>
-  <style type="text/tailwindcss">
-    @layer components {
-      .btn-primary { @apply inline-flex items-center justify-center px-3.5 py-2 text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors; }
-      .btn-secondary { @apply inline-flex items-center justify-center px-3.5 py-2 text-sm font-medium rounded-md bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 disabled:text-slate-400 transition-colors; }
-    }
-  </style>
 </head>
 <body class="bg-slate-100">
   <app-root></app-root>

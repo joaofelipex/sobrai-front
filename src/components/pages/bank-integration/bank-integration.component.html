@@ -46,21 +46,21 @@
           <table class="w-full text-sm text-left text-slate-500">
             <thead class="text-xs text-slate-700 uppercase bg-slate-50">
               <tr>
-                <th scope="col" class="px-6 py-4">Data</th>
-                <th scope="col" class="px-6 py-4">Descrição</th>
-                <th scope="col" class="px-6 py-4 text-right">Valor</th>
-                <th scope="col" class="px-6 py-4 text-center">Ação</th>
+                <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Data</th>
+                <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4">Descrição</th>
+                <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-right">Valor</th>
+                <th scope="col" class="px-3 py-3 sm:px-6 sm:py-4 text-center">Ação</th>
               </tr>
             </thead>
             <tbody>
               @for (t of mockTransactions(); track t.id) {
                 <tr class="bg-white border-b border-slate-200/80 last:border-b-0 hover:bg-slate-50/50">
-                  <td class="px-6 py-4">{{ t.date | date:'dd/MM/yyyy' }}</td>
-                  <td class="px-6 py-4 font-medium text-slate-900">{{ t.description }}</td>
-                  <td class="px-6 py-4 text-right font-semibold" [class.text-success-600]="t.type === 'credit'" [class.text-slate-800]="t.type === 'debit'">
+                  <td class="px-3 py-3 sm:px-6 sm:py-4">{{ t.date | date:'dd/MM/yyyy' }}</td>
+                  <td class="px-3 py-3 sm:px-6 sm:py-4 font-medium text-slate-900">{{ t.description }}</td>
+                  <td class="px-3 py-3 sm:px-6 sm:py-4 text-right font-semibold" [class.text-success-600]="t.type === 'credit'" [class.text-slate-800]="t.type === 'debit'">
                     {{ t.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
                   </td>
-                  <td class="px-6 py-4 text-center">
+                  <td class="px-3 py-3 sm:px-6 sm:py-4 text-center">
                     @if (t.imported) {
                       <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
