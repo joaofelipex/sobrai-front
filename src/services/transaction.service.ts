@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Transaction } from '../models/transaction.model';
+import { ToastService } from './toast.service';
 import { environment } from '../environments/environment';
 
 /**
@@ -15,6 +16,7 @@ import { environment } from '../environments/environment';
 })
 export class TransactionService {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   private apiUrl = `${environment.backendUrl}/api`;
 
   /** Sinal (Signal) que armazena a lista de todas as transações. */
@@ -119,6 +121,7 @@ export class TransactionService {
       },
       error: (err) => {
         console.error('Falha ao carregar transações do servidor', err);
+        this.toastService.showError('Não foi possível carregar as transações.');
       }
     });
   }
@@ -142,7 +145,10 @@ export class TransactionService {
       next: (newTransaction) => {
         this.transactions.update(transactions => this.sortTransactions([...transactions, newTransaction]));
       },
-      error: (err) => console.error('Falha ao adicionar transação', err)
+      error: (err) => {
+        console.error('Falha ao adicionar transação', err);
+        this.toastService.showError('Não foi possível adicionar a transação.');
+      }
     });
   }
 
@@ -157,7 +163,10 @@ export class TransactionService {
           this.sortTransactions(transactions.map(t => t.id === updatedTransaction.id ? result : t))
         );
       },
-      error: (err) => console.error('Falha ao atualizar transação', err)
+      error: (err) => {
+        console.error('Falha ao atualizar transação', err);
+        this.toastService.showError('Não foi possível atualizar a transação.');
+      }
     });
   }
 
@@ -170,7 +179,10 @@ export class TransactionService {
       next: () => {
         this.transactions.update(transactions => transactions.filter(t => t.id !== id));
       },
-      error: (err) => console.error('Falha ao excluir transação', err)
+      error: (err) => {
+        console.error('Falha ao excluir transação', err);
+        this.toastService.showError('Não foi possível excluir a transação.');
+      }
     });
   }
   

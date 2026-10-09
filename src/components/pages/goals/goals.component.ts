@@ -25,6 +25,8 @@ export class GoalsComponent implements OnInit {
   totalRevenue = this.transactionService.totalRevenue;
   balance = this.transactionService.balance;
   isModalOpen = signal(false);
+  editingGoalId = signal<string | null>(null);
+  goalPendingDelete = signal<Goal | null>(null);
   isLoading = signal(true);
 
   newGoal = signal({
@@ -41,20 +43,46 @@ export class GoalsComponent implements OnInit {
   }
 
   openModal() {
+    this.editingGoalId.set(null);
+    this.resetNewGoal();
+    this.isModalOpen.set(true);
+  }
+
+  openEditModal(goal: Goal) {
+    this.editingGoalId.set(goal.id);
+    this.newGoal.set({
+      name: goal.name,
+      type: goal.type,
+      targetAmount: goal.targetAmount,
+      deadline: goal.deadline.slice(0, 10),
+    });
     this.isModalOpen.set(true);
   }
 
   closeModal() {
     this.isModalOpen.set(false);
+    this.editingGoalId.set(null);
   }
 
-  addGoal() {
-    if (this.newGoal().name && this.newGoal().targetAmount > 0 && this.newGoal().deadline) {
-      this.goalService.addGoal(this.newGoal());
+  saveGoal() {
+    const goal = this.newGoal();
+    if (!(goal.name && goal.targetAmount > 0 && goal.deadline)) return;
+
+    const editingId = this.editingGoalId();
+    if (editingId) {
+      this.goalService.updateGoal({ id: editingId, ...goal });
+    } else {
+      this.goalService.addGoal(goal);
       this.toastService.show('Meta criada com sucesso!');
-      this.resetNewGoal();
-      this.closeModal();
     }
+    this.resetNewGoal();
+    this.closeModal();
+  }
+
+  confirmDelete() {
+    const goal = this.goalPendingDelete();
+    if (goal) this.goalService.deleteGoal(goal.id);
+    this.goalPendingDelete.set(null);
   }
 
   private getTomorrowDateString(): string {

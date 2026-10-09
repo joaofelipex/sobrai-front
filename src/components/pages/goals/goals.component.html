@@ -23,11 +23,15 @@
             <div>
               <div class="flex justify-between items-start">
                 <h3 class="text-lg font-semibold text-slate-800">{{ goal.name }}</h3>
+                <div class="flex items-center space-x-2">
+                <button type="button" (click)="openEditModal(goal)" class="text-sm font-medium text-slate-500 hover:text-emerald-700" aria-label="Editar meta">Editar</button>
+                <button type="button" (click)="goalPendingDelete.set(goal)" class="text-sm font-medium text-slate-500 hover:text-red-600" aria-label="Excluir meta">Excluir</button>
                 <span class="px-2 py-1 text-xs font-semibold rounded-full"
                   [class.bg-blue-100]="goal.type === 'revenue'" [class.text-blue-800]="goal.type === 'revenue'"
                   [class.bg-green-100]="goal.type === 'savings'" [class.text-green-800]="goal.type === 'savings'">
                   {{ goal.type === 'revenue' ? 'Faturamento' : 'Economia' }}
                 </span>
+                </div>
               </div>
               <div class="mt-4">
                 <div class="flex justify-between text-sm text-slate-500 mb-1">
@@ -68,14 +72,28 @@
     }
   }
 
+  <!-- Confirmação de exclusão -->
+  @if (goalPendingDelete(); as goal) {
+    <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="goalPendingDelete.set(null)">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-semibold text-slate-800">Excluir meta?</h3>
+        <p class="mt-2 text-sm text-slate-500">"{{ goal.name }}" será removida permanentemente.</p>
+        <div class="pt-6 flex justify-end space-x-3">
+          <button type="button" (click)="goalPendingDelete.set(null)" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
+          <button type="button" (click)="confirmDelete()" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">Excluir</button>
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- Add Goal Modal -->
   @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-md" (click)="$event.stopPropagation()">
         <div class="p-6 border-b border-slate-200/80">
-          <h3 class="text-xl font-semibold text-slate-800">Adicionar Nova Meta</h3>
+          <h3 class="text-xl font-semibold text-slate-800">{{ editingGoalId() ? 'Editar Meta' : 'Adicionar Nova Meta' }}</h3>
         </div>
-        <form (ngSubmit)="addGoal()" class="p-6 space-y-4">
+        <form (ngSubmit)="saveGoal()" class="p-6 space-y-4">
           <div>
             <label for="goalName" class="block text-sm font-medium text-slate-700">Nome da Meta</label>
             <input type="text" id="goalName" [(ngModel)]="newGoal().name" name="goalName" placeholder="Ex: Faturar 10 mil no mês" required class="mt-1 input-field">

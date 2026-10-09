@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CompanyProfile } from '../models/company.model';
+import { ToastService } from './toast.service';
 import { environment } from '../environments/environment';
 
 /**
@@ -15,6 +16,7 @@ import { environment } from '../environments/environment';
 })
 export class OnboardingService {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   private apiUrl = `${environment.backendUrl}/api`;
 
   private storageKey = 'sobrai_onboarding_complete_v1';
@@ -74,9 +76,9 @@ export class OnboardingService {
         this.companyProfile.set(updatedProfile);
       },
       error: (err) => {
-        console.warn('Erro ao salvar perfil da empresa no backend (backend pode estar offline):', err);
-        // Não falha completamente se o backend estiver offline
-        // O perfil já foi definido no signal localmente
+        console.error('Erro ao salvar perfil da empresa no backend:', err);
+        // O perfil já foi definido no signal localmente, mas não persistiu no servidor.
+        this.toastService.showError('Não foi possível salvar o perfil da empresa no servidor.');
       }
     });
   }
