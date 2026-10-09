@@ -5,8 +5,14 @@ import { SidebarService } from '../../services/sidebar.service';
 import { OnboardingService } from '../../services/onboarding.service';
 import {
   LucideAngularModule, LucideIconData, LayoutDashboard, ReceiptText, Repeat, Landmark, FileText,
-  TrendingUp, Sparkles, Target, BarChart3, CreditCard, Settings, Gem, X, LogOut,
+  TrendingUp, Lightbulb, Target, BarChart3, CreditCard, Settings, X, LogOut,
 } from 'lucide-angular';
+
+/** Grupo de itens do menu lateral. */
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
 
 /**
  * Interface para definir a estrutura de um item de navegação.
@@ -41,21 +47,42 @@ export class SidebarComponent {
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
 
   // Ícones avulsos usados no template (biblioteca Lucide).
-  readonly icons = { gem: Gem, x: X, sparkles: Sparkles, logOut: LogOut };
+  readonly icons = { x: X, logOut: LogOut };
 
-  // Array com os itens de navegação do menu.
-  navItems: NavItem[] = [
-    { path: 'painel-principal', label: 'Painel Principal', icon: LayoutDashboard },
-    { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: ReceiptText },
-    { path: 'recorrencias', label: 'Recorrências', icon: Repeat },
-    { path: 'integracao-bancaria', label: 'Integração Bancária', icon: Landmark },
-    { path: 'notas-fiscais', label: 'Notas Fiscais', icon: FileText },
-    { path: 'analise-financeira', label: 'Análise Financeira', icon: TrendingUp },
-    { path: 'insights-ia', label: 'Insights da IA', icon: Sparkles },
-    { path: 'metas', label: 'Metas', icon: Target },
-    { path: 'relatorios', label: 'Relatórios', icon: BarChart3 },
-    { path: 'assinatura', label: 'Assinatura', icon: CreditCard },
-    { path: 'configuracoes', label: 'Configurações', icon: Settings },
+  // Itens de navegação, agrupados por área.
+  navGroups: NavGroup[] = [
+    {
+      label: 'Geral',
+      items: [{ path: 'painel-principal', label: 'Painel', icon: LayoutDashboard }],
+    },
+    {
+      label: 'Financeiro',
+      items: [
+        { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: ReceiptText },
+        { path: 'recorrencias', label: 'Recorrências', icon: Repeat },
+        { path: 'integracao-bancaria', label: 'Integração Bancária', icon: Landmark },
+      ],
+    },
+    {
+      label: 'Fiscal',
+      items: [{ path: 'notas-fiscais', label: 'Notas Fiscais', icon: FileText }],
+    },
+    {
+      label: 'Análise',
+      items: [
+        { path: 'analise-financeira', label: 'Análise Financeira', icon: TrendingUp },
+        { path: 'insights-ia', label: 'Insights', icon: Lightbulb },
+        { path: 'metas', label: 'Metas', icon: Target },
+        { path: 'relatorios', label: 'Relatórios', icon: BarChart3 },
+      ],
+    },
+    {
+      label: 'Conta',
+      items: [
+        { path: 'assinatura', label: 'Assinatura', icon: CreditCard },
+        { path: 'configuracoes', label: 'Configurações', icon: Settings },
+      ],
+    },
   ];
 
   /**

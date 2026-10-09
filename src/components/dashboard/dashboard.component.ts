@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { MetricCardComponent } from '../shared/metric-card/metric-card.component';
+import { LineChartComponent } from '../shared/chart/line-chart.component';
 import { OnboardingService } from '../../services/onboarding.service';
 import { TransactionService } from '../../services/transaction.service';
 import { InvoiceService } from '../../services/invoice.service';
@@ -14,7 +16,7 @@ import { GoalService } from '../../services/goal.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MetricCardComponent, LineChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -37,6 +39,9 @@ export class DashboardComponent implements OnInit {
       minute: '2-digit'
     });
   });
+
+  /** Data de hoje por extenso, para o cabeçalho da página. */
+  today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 
   /** Sinal computado que define o subtítulo com base no período selecionado. */
   periodSubtitle = computed(() => {
@@ -84,50 +89,49 @@ export class DashboardComponent implements OnInit {
     const taxes = this.invoiceService.totalTaxesIssued();
     const balance = this.transactionService.balance();
     
-    // As informações de 'change' e 'changeType' são mocadas.
-    // Em uma implementação real, seriam calculadas comparando com o período anterior.
+    // 'change' fica vazio até existir comparação real com o período anterior (o card não exibe variação).
     return [
       {
-        title: 'Total Receitas',
+        title: 'Receitas',
         value: this.formatCurrency(revenue),
-        change: '+15%',
+        change: '',
         changeType: 'positive',
         icon: 'dollar-sign',
-        description: 'vs mês anterior',
-        link: ['/financeiro'],
+        description: 'Acumulado no período',
+        link: ['/receitas-e-despesas'],
         bgColor: 'bg-green-50',
         iconColor: 'text-green-600'
       },
       {
-        title: 'Total Despesas',
+        title: 'Despesas',
         value: this.formatCurrency(expenses),
-        change: '-5%',
+        change: '',
         changeType: 'negative',
         icon: 'receipt',
-        description: 'vs mês anterior',
-        link: ['/financeiro'],
+        description: 'Acumulado no período',
+        link: ['/receitas-e-despesas'],
         bgColor: 'bg-red-50',
         iconColor: 'text-red-600'
       },
       {
-        title: 'Impostos (Mês)',
+        title: 'Impostos em notas',
         value: this.formatCurrency(taxes),
         change: '',
         changeType: 'neutral',
         icon: 'file-text',
-        description: 'Total de NFs emitidas',
-        link: ['/invoices'],
+        description: 'Total das notas emitidas',
+        link: ['/notas-fiscais'],
         bgColor: 'bg-orange-50',
         iconColor: 'text-orange-600'
       },
       {
         title: 'Saldo',
         value: this.formatCurrency(balance),
-        change: balance >= 0 ? '+0%' : '-0%',
+        change: '',
         changeType: balance >= 0 ? 'positive' : 'negative',
         icon: 'trending-up',
         description: 'Receitas - Despesas',
-        link: ['/financeiro'],
+        link: ['/receitas-e-despesas'],
         bgColor: 'bg-blue-50',
         iconColor: 'text-blue-600'
       }

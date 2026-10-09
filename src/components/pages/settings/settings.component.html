@@ -1,12 +1,12 @@
 <main class="p-4 sm:p-6 lg:p-8">
   <!-- Header -->
   <div class="mb-8">
-    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Configurações</h1>
-    <p class="text-slate-500 mt-2 text-base sm:text-lg">Gerencie as informações da sua empresa.</p>
+    <h1 class="text-xl font-semibold text-slate-900">Configurações</h1>
+    <p class="text-sm text-slate-500 mt-0.5">Gerencie as informações da sua empresa.</p>
   </div>
 
   <div class="max-w-2xl">
-    <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 sm:p-8">
+    <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm p-6 sm:p-8">
       <form #form="ngForm" (ngSubmit)="saveSettings()" class="space-y-6">
         <div>
           <label for="companyName" class="block text-sm font-medium text-slate-700">Nome do Negócio</label>
@@ -26,11 +26,15 @@
         </div>
 
         <div class="pt-4 flex justify-end">
-           <button type="submit" [disabled]="form.invalid" class="px-8 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 disabled:bg-slate-300 transform hover:-translate-y-px transition-all">
+           <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-medium rounded-md hover:bg-emerald-700 disabled:bg-slate-300">
              Salvar Alterações
            </button>
         </div>
       </form>
+    </div>
+
+    <div class="mt-8">
+      <app-nfse-settings></app-nfse-settings>
     </div>
   </div>
 

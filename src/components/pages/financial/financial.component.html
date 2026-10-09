@@ -2,10 +2,10 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
     <div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Financeiro</h1>
-      <p class="text-slate-500 mt-2 text-base sm:text-lg">Registre e acompanhe suas receitas e despesas.</p>
+      <h1 class="text-xl font-semibold text-slate-900">Financeiro</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Registre e acompanhe suas receitas e despesas.</p>
     </div>
-    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-4 py-2 bg-emerald-600 text-white font-medium rounded-md hover:bg-emerald-700 flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       <span>Adicionar Transação</span>
     </button>
@@ -13,21 +13,21 @@
 
   <!-- Summary Cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 flex items-center space-x-4">
+    <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm p-6 flex items-center space-x-4">
       <div class="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success-600"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></div>
       <div>
         <h3 class="text-slate-500 font-semibold">Total de Receitas</h3>
         <p class="text-2xl font-bold text-success-600">{{ transactionService.totalRevenue().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
       </div>
     </div>
-    <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 flex items-center space-x-4">
+    <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm p-6 flex items-center space-x-4">
       <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
       <div>
         <h3 class="text-slate-500 font-semibold">Total de Despesas</h3>
         <p class="text-2xl font-bold text-red-600">{{ transactionService.totalExpenses().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
       </div>
     </div>
-    <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm p-6 flex items-center space-x-4">
+    <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm p-6 flex items-center space-x-4">
        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><line x1="5" x2="19" y1="12" y2="12"></line></svg></div>
       <div>
         <h3 class="text-slate-500 font-semibold">Saldo Atual</h3>
@@ -37,7 +37,7 @@
   </div>
 
   <!-- Transactions List -->
-  <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm">
+  <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm">
     <div class="p-6 border-b border-slate-200/80">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h3 class="text-xl font-semibold text-slate-800">Histórico de Transações</h3>
@@ -126,7 +126,7 @@
           </div>
           <h3 class="mt-5 text-xl font-semibold text-slate-800">Nenhuma transação registrada</h3>
           <p class="mt-2 text-slate-500">Clique no botão abaixo para adicionar sua primeira receita ou despesa.</p>
-          <button (click)="openModal()" class="mt-6 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md hover:bg-emerald-700 transform hover:-translate-y-0.5 transition-all">
+          <button (click)="openModal()" class="mt-6 px-4 py-2 bg-emerald-600 text-white font-medium rounded-md hover:bg-emerald-700">
             Adicionar Transação
           </button>
         </div>
@@ -136,7 +136,7 @@
   <!-- Modal -->
    @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg" (click)="$event.stopPropagation()">
         <form #form="ngForm" (ngSubmit)="saveTransaction()">
           <div class="p-6 border-b border-slate-200/80">
             <h3 class="text-xl font-semibold text-slate-800">{{ editingTransactionId() ? 'Editar' : 'Adicionar' }} Transação</h3>
@@ -174,7 +174,7 @@
           </div>
           <div class="p-6 bg-slate-50/50 rounded-b-xl flex justify-end space-x-3">
              <button type="button" (click)="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
-             <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 disabled:bg-slate-300">Salvar Transação</button>
+             <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-md hover:bg-emerald-700 disabled:bg-slate-300">Salvar Transação</button>
           </div>
         </form>
       </div>

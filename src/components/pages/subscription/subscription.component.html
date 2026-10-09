@@ -1,21 +1,21 @@
 <main class="p-4 sm:p-6 lg:p-8">
   <!-- Header -->
   <div class="mb-10">
-    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Gerenciar Assinatura</h1>
-    <p class="text-slate-500 mt-2 text-base sm:text-lg">Escolha o plano que melhor se adapta ao momento do seu negócio.</p>
+    <h1 class="text-xl font-semibold text-slate-900">Gerenciar Assinatura</h1>
+    <p class="text-sm text-slate-500 mt-0.5">Escolha o plano que melhor se adapta ao momento do seu negócio.</p>
   </div>
 
   <!-- Plans Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
     @for(plan of plans(); track plan.id) {
-      <div class="relative bg-white border rounded-xl shadow-sm p-8 flex flex-col transition-all duration-300 ease-out"
+      <div class="relative bg-white border rounded-lg shadow-sm p-8 flex flex-col transition-all"
            [class.border-emerald-500]="currentPlanId() === plan.id"
            [class.shadow-emerald-500/20]="currentPlanId() === plan.id"
            [class.shadow-lg]="currentPlanId() === plan.id"
            [class.border-slate-200/80]="currentPlanId() !== plan.id">
         
         @if (currentPlanId() === plan.id) {
-          <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full shadow-md">
+          <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full shadow-sm">
             Plano Atual
           </div>
         }
@@ -54,8 +54,8 @@
 
   <!-- Billing History -->
   <div>
-    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-800 mb-5">Histórico de Faturamento</h2>
-    <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm overflow-hidden">
+    <h2 class="text-base font-semibold text-slate-900 mb-4">Histórico de Faturamento</h2>
+    <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left text-slate-500">
           <thead class="text-xs text-slate-700 uppercase bg-slate-50">

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Metric } from '../../../models/metric.model';
 
@@ -12,7 +12,7 @@ interface MetricWithStyle extends Metric {
 @Component({
   selector: 'app-metric-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgClass],
+  imports: [CommonModule, RouterModule],
   templateUrl: './metric-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

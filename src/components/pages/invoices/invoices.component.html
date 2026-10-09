@@ -2,17 +2,17 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
     <div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800">Notas Fiscais</h1>
-      <p class="text-slate-500 mt-2 text-base sm:text-lg">Emita e gerencie suas notas fiscais de serviço.</p>
+      <h1 class="text-xl font-semibold text-slate-900">Notas Fiscais</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Emita e gerencie suas notas fiscais de serviço.</p>
     </div>
-    <button (click)="openModal()" class="mt-4 sm:mt-0 px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-500/30 hover:bg-emerald-700 transform hover:-translate-y-px transition-all flex items-center justify-center space-x-2">
+    <button (click)="openModal()" class="mt-4 sm:mt-0 px-4 py-2 bg-emerald-600 text-white font-medium rounded-md hover:bg-emerald-700 flex items-center justify-center space-x-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      <span>Emitir NF-e</span>
+      <span>Emitir nota</span>
     </button>
   </div>
 
   <!-- Invoices List -->
-  <div class="bg-white border border-slate-200/80 rounded-xl shadow-sm">
+  <div class="bg-white border border-slate-200/80 rounded-lg shadow-sm">
     <div class="p-6 border-b border-slate-200/80">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h3 class="text-xl font-semibold text-slate-800">Histórico de Emissões</h3>
@@ -34,6 +34,7 @@
               <th scope="col" class="px-6 py-4">Data</th>
               <th scope="col" class="px-6 py-4">Status</th>
               <th scope="col" class="px-6 py-4 text-right">Valor</th>
+              <th scope="col" class="px-6 py-4">NFS-e</th>
               <th scope="col" class="px-6 py-4 text-center">Ações</th>
             </tr>
           </thead>
@@ -53,6 +54,38 @@
                 <td class="px-6 py-4 text-right font-semibold text-slate-800">
                   {{ invoice.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
                 </td>
+                <td class="px-6 py-4 min-w-[14rem]">
+                  @let doc = nfseService.latestByInvoice().get(invoice.id);
+                  @let working = nfseService.busy().has(invoice.id);
+                  @if (doc?.status === 'authorized') {
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-success-100 text-success-800">
+                      Autorizada{{ doc?.numeroNfse ? ' nº ' + doc?.numeroNfse : '' }}
+                    </span>
+                    @if (doc?.ambiente === 2) {
+                      <span class="ml-1 text-xs text-amber-700" title="Ambiente de homologação: sem validade fiscal">teste</span>
+                    }
+                    <div class="mt-1 space-x-3">
+                      <button (click)="nfseService.downloadXml(doc!)" class="text-xs font-medium text-emerald-700 hover:underline">XML</button>
+                      <button (click)="openNfseCancel(doc!)" [disabled]="working" class="text-xs font-medium text-red-600 hover:underline">Cancelar NFS-e</button>
+                    </div>
+                  } @else {
+                    @if (doc?.status === 'rejected' || doc?.status === 'indeterminate') {
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                        {{ doc?.status === 'rejected' ? 'Rejeitada' : 'Indeterminada' }}
+                      </span>
+                      <p class="mt-1 text-xs text-red-700 whitespace-normal">{{ doc?.erro }}</p>
+                    } @else if (doc?.status === 'canceled') {
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">NFS-e cancelada</span>
+                    }
+                    @if (invoice.status !== 'canceled' && doc?.status !== 'canceled') {
+                      <button (click)="nfseService.emit(invoice.id)" [disabled]="working || !nfseService.isReady()"
+                        [title]="nfseService.isReady() ? '' : 'Configure os dados fiscais e o certificado em Configurações'"
+                        class="mt-1 block text-xs font-semibold text-emerald-700 hover:underline disabled:text-slate-400 disabled:no-underline">
+                        {{ working ? 'Emitindo…' : (doc ? 'Tentar novamente' : 'Emitir NFS-e') }}
+                      </button>
+                    }
+                  }
+                </td>
                 <td class="px-6 py-4 text-center space-x-2">
                   @if(invoice.status === 'issued') {
                     <button (click)="updateStatus(invoice.id, 'paid')" class="font-medium text-emerald-700 hover:underline">Marcar como Paga</button>
@@ -67,16 +100,44 @@
       } @else {
         <div class="text-center p-12">
           <p class="text-slate-500">Nenhuma nota fiscal encontrada.</p>
-          <p class="text-slate-400 text-sm mt-1">Clique em "Emitir NF-e" para começar.</p>
+          <p class="text-slate-400 text-sm mt-1">Clique em "Emitir nota" para começar.</p>
         </div>
       }
     </div>
   </div>
 
   <!-- Add Invoice Modal -->
+  @if (nfseToCancel(); as target) {
+    <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="nfseToCancel.set(null)">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-md p-6" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-semibold text-slate-800">Cancelar NFS-e{{ target.numeroNfse ? ' nº ' + target.numeroNfse : '' }}?</h3>
+        <p class="mt-2 text-sm text-slate-500">O cancelamento é registrado na prefeitura/SEFIN e não pode ser desfeito.</p>
+        <div class="mt-4 space-y-3">
+          <div>
+            <label for="cancelCode" class="block text-sm font-medium text-slate-700">Motivo</label>
+            <select id="cancelCode" [ngModel]="cancelCode()" (ngModelChange)="cancelCode.set($event)" class="mt-1 input-field">
+              <option value="1">Erro na emissão</option>
+              <option value="2">Serviço não prestado</option>
+              <option value="9">Outros</option>
+            </select>
+          </div>
+          <div>
+            <label for="cancelText" class="block text-sm font-medium text-slate-700">Justificativa (mín. 15 caracteres)</label>
+            <textarea id="cancelText" rows="3" maxlength="255" [ngModel]="cancelText()" (ngModelChange)="cancelText.set($event)" class="mt-1 input-field"></textarea>
+          </div>
+        </div>
+        <div class="pt-6 flex justify-end space-x-3">
+          <button type="button" (click)="nfseToCancel.set(null)" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Voltar</button>
+          <button type="button" (click)="confirmNfseCancel()" [disabled]="cancelText().trim().length < 15"
+            class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:bg-slate-300">Cancelar NFS-e</button>
+        </div>
+      </div>
+    </div>
+  }
+
   @if (invoicePendingDelete()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="invoicePendingDelete.set(null)">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-sm p-6" (click)="$event.stopPropagation()">
         <h3 class="text-lg font-semibold text-slate-800">Excluir nota fiscal?</h3>
         <p class="mt-2 text-sm text-slate-500">A nota e a receita gerada por ela serão removidas permanentemente.</p>
         <div class="pt-6 flex justify-end space-x-3">
@@ -89,7 +150,7 @@
 
   @if (isModalOpen()) {
     <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" (click)="closeModal()">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" (click)="$event.stopPropagation()">
+      <div class="bg-white rounded-lg shadow-sm w-full max-w-lg" (click)="$event.stopPropagation()">
         <div class="p-6 border-b border-slate-200/80">
           <h3 class="text-xl font-semibold text-slate-800">Emitir Nova Nota Fiscal</h3>
         </div>
@@ -139,7 +200,7 @@
           </div>
           <div class="pt-4 flex justify-end space-x-3">
             <button type="button" (click)="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300">Cancelar</button>
-            <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 disabled:bg-slate-300">Emitir Nota</button>
+            <button type="submit" [disabled]="form.invalid" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-md hover:bg-emerald-700 disabled:bg-slate-300">Emitir Nota</button>
           </div>
         </form>
       </div>
