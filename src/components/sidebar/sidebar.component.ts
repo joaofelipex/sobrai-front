@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
 import { OnboardingService } from '../../services/onboarding.service';
+import {
+  LucideAngularModule, LucideIconData, LayoutDashboard, ReceiptText, Repeat, Landmark, FileText,
+  TrendingUp, Sparkles, Target, BarChart3, CreditCard, Settings, Gem, X, LogOut,
+} from 'lucide-angular';
 
 /**
  * Interface para definir a estrutura de um item de navegação.
@@ -10,7 +14,7 @@ import { OnboardingService } from '../../services/onboarding.service';
 interface NavItem {
   path: string;
   label: string;
-  icon: string;
+  icon: LucideIconData;
 }
 
 /**
@@ -20,7 +24,7 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './sidebar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,19 +40,22 @@ export class SidebarComponent {
   // Signal computado que obtém o nome do usuário/empresa do serviço de onboarding.
   userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
 
+  // Ícones avulsos usados no template (biblioteca Lucide).
+  readonly icons = { gem: Gem, x: X, sparkles: Sparkles, logOut: LogOut };
+
   // Array com os itens de navegação do menu.
   navItems: NavItem[] = [
-    { path: 'painel-principal', label: 'Painel Principal', icon: 'grid' },
-    { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: 'receipt' },
-    { path: 'recorrencias', label: 'Recorrências', icon: 'repeat' },
-    { path: 'integracao-bancaria', label: 'Integração Bancária', icon: 'arrows-left-right' },
-    { path: 'notas-fiscais', label: 'Notas Fiscais', icon: 'file-text' },
-    { path: 'analise-financeira', label: 'Análise Financeira', icon: 'bar-chart' },
-    { path: 'insights-ia', label: 'Insights da IA', icon: 'sparkles' },
-    { path: 'metas', label: 'Metas', icon: 'target' },
-    { path: 'relatorios', label: 'Relatórios', icon: 'bar-chart-2' },
-    { path: 'assinatura', label: 'Assinatura', icon: 'credit-card' },
-    { path: 'configuracoes', label: 'Configurações', icon: 'settings' },
+    { path: 'painel-principal', label: 'Painel Principal', icon: LayoutDashboard },
+    { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: ReceiptText },
+    { path: 'recorrencias', label: 'Recorrências', icon: Repeat },
+    { path: 'integracao-bancaria', label: 'Integração Bancária', icon: Landmark },
+    { path: 'notas-fiscais', label: 'Notas Fiscais', icon: FileText },
+    { path: 'analise-financeira', label: 'Análise Financeira', icon: TrendingUp },
+    { path: 'insights-ia', label: 'Insights da IA', icon: Sparkles },
+    { path: 'metas', label: 'Metas', icon: Target },
+    { path: 'relatorios', label: 'Relatórios', icon: BarChart3 },
+    { path: 'assinatura', label: 'Assinatura', icon: CreditCard },
+    { path: 'configuracoes', label: 'Configurações', icon: Settings },
   ];
 
   /**
