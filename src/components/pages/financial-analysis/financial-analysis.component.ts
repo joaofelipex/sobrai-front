@@ -82,7 +82,7 @@ export class FinancialAnalysisComponent {
    * Sinal computado que prepara os dados para o gráfico de linhas de Receitas vs. Despesas.
    * Agrupa as transações por dia (para visualização mensal/trimestral) ou por mês (para visualização anual)
    * e formata os dados para serem consumidos pelo componente de gráfico.
-   * @returns Um objeto contendo `labels` e `datasets` para o gráfico.
+   * @returns Lista de pontos `{ name, Receita, Despesa }` para o gráfico de linhas.
    */
   revenueVsExpensesChartData = computed(() => {
     const transactions = this.filteredTransactions();
@@ -115,27 +115,12 @@ export class FinancialAnalysisComponent {
 
     const sortedKeys = Array.from(dataMap.keys()).sort();
 
-    const labels = sortedKeys.map(key => formatLabel(new Date(key)));
-    const revenueData = sortedKeys.map(key => dataMap.get(key)!.revenue);
-    const expensesData = sortedKeys.map(key => dataMap.get(key)!.expenses);
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Receitas',
-          data: revenueData,
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          borderColor: 'rgba(16, 185, 129, 1)',
-        },
-        {
-          label: 'Despesas',
-          data: expensesData,
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
-          borderColor: 'rgba(239, 68, 68, 1)',
-        }
-      ]
-    };
+    // Formato esperado por <app-line-chart>: uma linha por ponto, com uma chave por série.
+    return sortedKeys.map(key => ({
+      name: formatLabel(new Date(key)),
+      Receita: dataMap.get(key)!.revenue,
+      Despesa: dataMap.get(key)!.expenses,
+    }));
   });
 
   /**
