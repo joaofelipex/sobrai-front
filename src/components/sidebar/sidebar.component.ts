@@ -5,7 +5,7 @@ import { SidebarService } from '../../services/sidebar.service';
 import { OnboardingService } from '../../services/onboarding.service';
 import {
   LucideAngularModule, LucideIconData, LayoutDashboard, ReceiptText, Repeat, Landmark, FileText,
-  TrendingUp, Lightbulb, Target, BarChart3, CreditCard, Settings, X, LogOut,
+  TrendingUp, Lightbulb, Gem, Wallet, ArrowLeftRight, Target, BarChart3, CreditCard, Settings, X, LogOut,
 } from 'lucide-angular';
 
 /** Grupo de itens do menu lateral. */
@@ -54,6 +54,14 @@ export class SidebarComponent {
     {
       label: 'Geral',
       items: [{ path: 'painel-principal', label: 'Painel', icon: LayoutDashboard }],
+    },
+    {
+      label: 'MiXCo · Pessoal',
+      items: [
+        { path: 'mixco', label: 'Visão geral', icon: Gem },
+        { path: 'mixco/patrimonio', label: 'Patrimônio', icon: Wallet },
+        { path: 'mixco/fluxo', label: 'Fluxo de caixa', icon: ArrowLeftRight },
+      ],
     },
     {
       label: 'Financeiro',

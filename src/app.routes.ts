@@ -10,6 +10,9 @@ import { FinancialAnalysisComponent } from './components/pages/financial-analysi
 import { AiInsightsPageComponent } from './components/pages/ai-insights-page/ai-insights-page.component';
 import { GoalsComponent } from './components/pages/goals/goals.component';
 import { RecurringComponent } from './components/pages/recurring/recurring.component';
+import { MixcoOverviewComponent } from './components/pages/mixco/mixco-overview.component';
+import { MixcoWealthComponent } from './components/pages/mixco/mixco-wealth.component';
+import { MixcoCashflowComponent } from './components/pages/mixco/mixco-cashflow.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'painel-principal', pathMatch: 'full' },
@@ -24,5 +27,8 @@ export const routes: Routes = [
     { path: 'relatorios', component: ReportsComponent, title: 'Relatórios | Sobrai' },
     { path: 'assinatura', component: SubscriptionComponent, title: 'Assinatura | Sobrai' },
     { path: 'configuracoes', component: SettingsComponent, title: 'Configurações | Sobrai' },
+    { path: 'mixco', component: MixcoOverviewComponent, title: 'MiXCo | Sobrai' },
+    { path: 'mixco/patrimonio', component: MixcoWealthComponent, title: 'Patrimônio | MiXCo' },
+    { path: 'mixco/fluxo', component: MixcoCashflowComponent, title: 'Fluxo de caixa | MiXCo' },
     { path: '**', redirectTo: 'painel-principal' } // Rota coringa para redirecionar URLs inválidas
 ];

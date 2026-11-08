@@ -49,6 +49,7 @@ Quem é MEI ou trabalha por conta própria costuma controlar o dinheiro numa pla
 | 🏛️ | **NFS-e Nacional** | Geração e assinatura da DPS, envio à SEFIN, download do XML e cancelamento |
 | 🎯 | **Metas** | Metas de faturamento ou economia, com progresso e prazo |
 | 📈 | **Análise e relatórios** | Receitas vs. despesas por período, despesas por categoria, lucro líquido |
+| 💎 | **MiXCo (pessoal)** | Gestora de patrimônio: patrimônio líquido, evolução mensal, alocação, contas e lançamentos, orçamento por categoria, reserva de emergência e endividamento (rotas `#/mixco`) |
 | 💡 | **Insights** | Recomendações com Google Gemini, chamadas pelo servidor (opcional) |
 
 <br>

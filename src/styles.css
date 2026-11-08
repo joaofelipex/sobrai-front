@@ -93,3 +93,10 @@ main { animation: page-fade-in 0.15s ease-out; }
   button, [role=button], .btn-primary, .btn-secondary { min-height: 40px; }
   a, button { -webkit-tap-highlight-color: transparent; }
 }
+
+/* MiXCo: campos de formulário. */
+@layer components {
+  .mx-field {
+    @apply block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none;
+  }
+}
