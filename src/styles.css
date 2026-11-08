@@ -96,10 +96,10 @@
     @apply inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-xl bg-[var(--color-loss)] text-white hover:brightness-110 active:scale-[0.98] transition;
   }
   .btn-link {
-    @apply text-[13px] font-medium text-slate-500 hover:text-emerald-700 rounded px-1 py-0.5 transition-colors;
+    @apply inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-emerald-700 rounded px-1 py-0.5 transition-colors;
   }
   .btn-link-danger {
-    @apply text-[13px] font-medium text-slate-500 hover:text-[var(--color-loss)] rounded px-1 py-0.5 transition-colors;
+    @apply inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-[var(--color-loss)] rounded px-1 py-0.5 transition-colors;
   }
 }
 
@@ -114,7 +114,7 @@ main { animation: page-fade-in 0.15s ease-out; }
 
 /* Celular: campos com 16px (o iOS dá zoom em fontes menores) e alvos de toque de 44px. */
 @media (max-width: 767px) {
-  input:not([type=checkbox]):not([type=radio]):not([type=file]), select, textarea { font-size: 16px !important; }
+  input:not([type=checkbox]):not([type=radio]):not([type=file]):not(.mx-amount), select, textarea { font-size: 16px !important; }
   input:not([type=checkbox]):not([type=radio]):not([type=file]), select { min-height: 44px; }
   button, [role=button], .btn-primary, .btn-secondary { min-height: 40px; }
   a, button { -webkit-tap-highlight-color: transparent; }
@@ -137,7 +137,7 @@ main { animation: page-fade-in 0.15s ease-out; }
   .mx-row { @apply flex items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-slate-100 last:border-0 transition-colors hover:bg-slate-50/70; }
   .mx-chip { @apply inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600; }
   .mx-backdrop { @apply fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-ink-950/50 backdrop-blur-sm; animation: mx-fade 0.15s ease-out both; }
-  .mx-modal { @apply w-full bg-white sm:rounded-2xl rounded-t-3xl shadow-2xl max-h-[92vh] overflow-y-auto; animation: mx-pop 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .mx-modal { @apply relative w-full bg-white sm:rounded-2xl rounded-t-3xl shadow-2xl max-h-[92dvh] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]; animation: mx-pop 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
   .mx-modal-title { @apply px-6 pt-6 pb-2 text-lg font-semibold tracking-tight text-slate-900; }
   .mx-hero {
     @apply relative overflow-hidden rounded-3xl text-white p-6 sm:p-8 shadow-[var(--shadow-lift)];
@@ -159,3 +159,18 @@ main { animation: page-fade-in 0.15s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .mx-rise, .mx-bar, .mx-backdrop, .mx-modal, main { animation: none !important; }
 }
+
+/* Sheet no celular: alça de arraste visual e alvos de toque de 44px. */
+@media (max-width: 639px) {
+  .mx-modal::before { content: ''; display: block; width: 40px; height: 4px; border-radius: 9999px; background: #cbd5e1; margin: 10px auto 0; }
+  .btn-link, .btn-link-danger { min-height: 44px; padding-inline: 10px; }
+  .mx-row { padding-block: 0.75rem; }
+  /* Folga no fim das telas para o botão + não cobrir a última linha. */
+  main.mx-page { padding-bottom: 6rem; }
+}
+/* Rolagem horizontal sem barra (carrosséis e chips). */
+.mx-scroll-x { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.mx-scroll-x::-webkit-scrollbar { display: none; }
+
+/* Campo de valor do lançamento rápido: grande e sem zoom no iOS (>= 16px). */
+.mx-amount { font-size: 3rem; line-height: 1; }

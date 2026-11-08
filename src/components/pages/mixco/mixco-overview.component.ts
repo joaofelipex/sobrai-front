@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, PiggyBank, ShieldCheck, Receipt, TrendingUp, RefreshCw, ArrowUpRight, ArrowDownRight, ArrowRight, Landmark, Check, CircleAlert, TriangleAlert, Info, CircleCheck } from 'lucide-angular';
@@ -76,9 +76,9 @@ const STALE_MS = 6 * 60 * 60 * 1000;
       </section>
 
       <!-- Indicadores -->
-      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <div class="mx-scroll-x flex snap-x snap-mandatory scroll-px-4 gap-3 -mx-4 px-4 pb-2 mb-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 xl:grid-cols-4 sm:gap-4 sm:mb-6 sm:overflow-visible">
         @for (k of kpis(); track k.label; let i = $index) {
-          <div class="mx-card mx-card-hover p-4 sm:p-5 mx-rise" [style.animation-delay.ms]="120 + i * 50">
+          <div class="mx-card mx-card-hover p-4 sm:p-5 mx-rise snap-start shrink-0 w-[62%] sm:w-auto" [style.animation-delay.ms]="120 + i * 50">
             <div class="flex items-center justify-between">
               <span class="mx-label">{{ k.label }}</span>
               <span class="w-8 h-8 rounded-xl flex items-center justify-center" [style.background]="k.tint" [style.color]="k.color">
@@ -96,7 +96,7 @@ const STALE_MS = 6 * 60 * 60 * 1000;
         <section class="mb-6 mx-rise" style="animation-delay: 200ms">
           <h2 class="mx-section-title mb-3">O que fazer agora</h2>
           <ul class="grid grid-cols-1 xl:grid-cols-2 gap-3">
-            @for (i of s.insights; track i.title) {
+            @for (i of shownInsights(); track i.title) {
               <li class="relative overflow-hidden mx-card p-4 pl-5 flex items-start gap-3">
                 <span class="absolute left-0 inset-y-0 w-1" [style.background]="tone(i).bar"></span>
                 <span class="w-8 h-8 shrink-0 rounded-xl flex items-center justify-center" [style.background]="tone(i).tint" [style.color]="tone(i).bar">
@@ -110,6 +110,11 @@ const STALE_MS = 6 * 60 * 60 * 1000;
               </li>
             }
           </ul>
+          @if (s.insights.length > 3) {
+            <button type="button" class="btn-link mt-1" (click)="showAllInsights.set(!showAllInsights())">
+              {{ showAllInsights() ? 'Mostrar menos' : 'Ver todos (' + s.insights.length + ')' }}
+            </button>
+          }
         </section>
       }
 
@@ -174,7 +179,7 @@ const STALE_MS = 6 * 60 * 60 * 1000;
             <a routerLink="/mixco/fluxo" class="btn-link">Ajustar limites</a>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
-            @for (b of s.budget; track b.category) {
+            @for (b of shownBudget(); track b.category) {
               <div>
                 <div class="flex items-center justify-between gap-3 text-sm">
                   <span class="flex items-center gap-2 text-slate-800 font-medium">
@@ -192,6 +197,9 @@ const STALE_MS = 6 * 60 * 60 * 1000;
               </div>
             } @empty { <p class="text-sm text-slate-500">Sem despesas neste mês.</p> }
           </div>
+          @if (s.budget.length > 6) {
+            <button type="button" class="btn-link mt-3" (click)="showAllBudget.set(!showAllBudget())">{{ showAllBudget() ? 'Mostrar menos' : 'Ver todas (' + s.budget.length + ')' }}</button>
+          }
         </section>
       </div>
     }
@@ -241,6 +249,11 @@ export class MixcoOverviewComponent implements OnInit {
     const pct = Math.round(((f.expense - f.previousExpense) / f.previousExpense) * 100);
     return `${pct >= 0 ? '+' : ''}${pct}% vs. mês anterior`;
   });
+
+  showAllInsights = signal(false);
+  showAllBudget = signal(false);
+  shownInsights = computed(() => { const i = this.s()?.insights ?? []; return this.showAllInsights() ? i : i.slice(0, 3); });
+  shownBudget = computed(() => { const b = this.s()?.budget ?? []; return this.showAllBudget() ? b : b.slice(0, 6); });
 
   greeting = computed(() => {
     const h = new Date().getHours();

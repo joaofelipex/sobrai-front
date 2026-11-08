@@ -34,6 +34,8 @@ export class MixcoService {
   recurring = signal<MxRecurring[]>([]);
   pluggy = signal<PluggyStatus | null>(null);
   syncing = signal(false);
+  /** Folha de lançamento rápido (botão + do celular). */
+  quickAddOpen = signal(false);
   month = signal(currentMonth());
   loading = signal(false);
 

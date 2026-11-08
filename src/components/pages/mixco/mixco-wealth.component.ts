@@ -14,7 +14,7 @@ type Target = { kind: 'asset' | 'liability'; id: string; name: string };
   imports: [FormsModule, BrlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-<main class="p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
+<main class="mx-page p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
   <div class="mb-6 mx-rise">
     <h1 class="mx-title">Patrimônio</h1>
     <p class="mx-subtitle">Investimentos, imóveis, veículos e dívidas. Atualize os valores quando mudarem.</p>

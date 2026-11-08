@@ -12,7 +12,7 @@ import { RingComponent } from './mx-visuals';
   imports: [FormsModule, BrlPipe, RingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-<main class="p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
+<main class="mx-page p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
   <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6 mx-rise">
     <div>
       <h1 class="mx-title">Metas</h1>

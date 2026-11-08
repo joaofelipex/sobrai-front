@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, ChevronLeft, ChevronRight } from 'lucide-angular';
 import { MixcoService } from '../../../services/mixco.service';
 import { ACCOUNT_KIND_LABELS, BUDGET_CATEGORIES, EXPENSE_CATEGORIES, INCOME_CATEGORIES, INTERNAL_CATEGORIES, MxAccount, MxRecurring, MxTransaction } from '../../../models/mixco.model';
 import { BrlPipe } from './brl.pipe';
@@ -11,27 +12,44 @@ const today = () => new Date().toISOString().slice(0, 10);
 @Component({
   selector: 'app-mixco-cashflow',
   standalone: true,
-  imports: [FormsModule, BrlPipe],
+  imports: [FormsModule, LucideAngularModule, BrlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-<main class="p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
-  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6 mx-rise">
-    <div>
+<main class="mx-page p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
+  <div class="flex items-end justify-between gap-3 mb-4 mx-rise">
+    <div class="min-w-0">
       <h1 class="mx-title">Fluxo de caixa</h1>
-      <p class="mx-subtitle">Contas, entradas e saídas do mês, e quanto você quer gastar por categoria.</p>
+      <p class="mx-subtitle hidden sm:block">Contas, entradas e saídas do mês, e quanto você quer gastar por categoria.</p>
     </div>
-    <input type="month" class="mx-field sm:w-44" [ngModel]="mixco.month()" (ngModelChange)="changeMonth($event)" aria-label="Mês">
+    <div class="flex items-center rounded-2xl bg-white ring-1 ring-slate-200 shrink-0" role="group" aria-label="Mês">
+      <button type="button" class="w-11 h-11 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-l-2xl" (click)="shiftMonth(-1)" aria-label="Mês anterior">
+        <lucide-icon [img]="icons.prev" [size]="18"></lucide-icon>
+      </button>
+      <span class="px-1 min-w-[6.5rem] text-center text-sm font-semibold capitalize text-slate-800">{{ monthLabel() }}</span>
+      <button type="button" class="w-11 h-11 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-r-2xl disabled:opacity-30" [disabled]="isCurrentMonth()" (click)="shiftMonth(1)" aria-label="Próximo mês">
+        <lucide-icon [img]="icons.next" [size]="18"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Abas (celular): uma coisa por vez em vez de uma rolagem de 3 telas -->
+  <div class="lg:hidden sticky top-14 z-10 -mx-4 px-4 py-2 mb-4 bg-[#f5f6f8]/90 backdrop-blur mx-scroll-x flex gap-2" role="tablist">
+    @for (t of tabs; track t.id) {
+      <button type="button" role="tab" [attr.aria-selected]="tab() === t.id" (click)="tab.set(t.id)"
+              class="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold ring-1 ring-inset transition"
+              [class]="tab() === t.id ? 'bg-ink-900 text-white ring-ink-900' : 'bg-white text-slate-600 ring-slate-200'">{{ t.label }}</button>
+    }
   </div>
 
   <!-- Contas -->
-  <section class="mb-6">
+  <section class="mb-6" [class]="show('contas')">
     <div class="flex items-center justify-between mb-3">
       <h2 class="mx-section-title">Contas e cartões</h2>
       <button type="button" class="btn-secondary" (click)="newAccount()">Nova conta</button>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div class="mx-scroll-x flex snap-x snap-mandatory scroll-px-4 gap-3 -mx-4 px-4 pb-2 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 xl:grid-cols-3 sm:gap-4 sm:overflow-visible">
       @for (a of mixco.accounts(); track a.id) {
-        <div class="relative overflow-hidden rounded-2xl p-5 mx-rise transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
+        <div class="relative overflow-hidden rounded-2xl p-5 mx-rise transition snap-center shrink-0 w-[82%] sm:w-auto hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
              [class]="a.kind === 'credit' ? 'text-white bg-gradient-to-br from-ink-800 to-ink-700 shadow-[var(--shadow-card)]' : 'mx-card'">
           @if (a.kind === 'credit') { <span class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-mint-400/20 blur-2xl"></span> }
           <div class="relative flex items-start justify-between">
@@ -57,19 +75,21 @@ const today = () => new Date().toISOString().slice(0, 10);
   </section>
 
   <!-- Lançamentos do mês -->
-  <section class="mx-card mb-6 mx-rise">
+  <section class="mx-card mb-6 mx-rise" [class]="show('lanc')">
     <div class="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 py-4 border-b border-slate-100">
       <div>
         <h2 class="mx-section-title">Lançamentos</h2>
-        <p class="text-xs text-slate-500 tabular">Entradas {{ totals().income | brl }} · Saídas {{ totals().expense | brl }}</p>
+        <p class="text-xs text-slate-500 tabular">+{{ totals().income | brl }} · −{{ totals().expense | brl }} · <b [class.text-[var(--color-loss)]]="totals().income < totals().expense" class="text-slate-700">saldo {{ totals().income - totals().expense | brl }}</b></p>
       </div>
       <div class="flex items-center gap-3">
-        <label class="text-sm text-slate-600 flex items-center gap-2"><input type="checkbox" [checked]="onlyUncategorized()" (change)="onlyUncategorized.set(!onlyUncategorized())"> Só sem categoria ({{ mixco.summary()?.uncategorized ?? 0 }})</label>
-        <button type="button" class="btn-primary" [disabled]="!mixco.accounts().length" (click)="newTx()">Adicionar</button>
+        <button type="button" class="rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition"
+                [class]="onlyUncategorized() ? 'bg-ink-900 text-white ring-ink-900' : 'bg-white text-slate-600 ring-slate-200'"
+                (click)="onlyUncategorized.set(!onlyUncategorized())">Sem categoria ({{ mixco.summary()?.uncategorized ?? 0 }})</button>
+        <button type="button" class="btn-primary hidden sm:inline-flex" [disabled]="!mixco.accounts().length" (click)="newTx()">Adicionar</button>
       </div>
     </div>
     @for (t of visibleTxs(); track t.id) {
-      <div class="mx-row" [class.opacity-60]="isInternal(t.category)">
+      <div class="mx-row cursor-pointer active:bg-slate-100" [class.opacity-60]="isInternal(t.category)" (click)="editTx(t)" role="button" tabindex="0" (keydown.enter)="editTx(t)">
         <span class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" [style.background]="catColor(t.category)">{{ t.category.charAt(0) }}</span>
         <div class="flex-1 min-w-0">
           <p class="font-medium text-slate-900 truncate">{{ t.description }}</p>
@@ -83,11 +103,10 @@ const today = () => new Date().toISOString().slice(0, 10);
         <p class="font-semibold tabular text-right" [class.text-[var(--color-gain)]]="t.type === 'income'" [class.text-slate-900]="t.type === 'expense'">
           {{ t.type === 'income' ? '+' : '−' }} {{ t.amount | brl }}
         </p>
-        <div class="text-sm whitespace-nowrap hidden sm:flex">
+        <div class="text-sm whitespace-nowrap hidden sm:flex" (click)="$event.stopPropagation()">
           <button type="button" class="btn-link" (click)="editTx(t)">Editar</button>
           <button type="button" class="btn-link-danger" (click)="deleteTx(t)">Excluir</button>
         </div>
-        <button type="button" class="sm:hidden btn-link" (click)="editTx(t)" aria-label="Editar lançamento">Editar</button>
       </div>
     } @empty {
       <p class="p-6 text-sm text-slate-500 text-center">Nenhum lançamento neste mês.</p>
@@ -95,7 +114,7 @@ const today = () => new Date().toISOString().slice(0, 10);
   </section>
 
   <!-- Contas fixas -->
-  <section class="mx-card mb-6 mx-rise">
+  <section class="mx-card mb-6 mx-rise" [class]="show('fixas')">
     <div class="px-4 sm:px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
       <div>
         <h2 class="mx-section-title">Contas fixas</h2>
@@ -150,7 +169,7 @@ const today = () => new Date().toISOString().slice(0, 10);
   }
 
   <!-- Orçamento -->
-  <section class="mx-card mx-rise">
+  <section class="mx-card mx-rise" [class]="show('orc')">
     <div class="px-4 sm:px-5 py-4 border-b border-slate-100">
       <h2 class="mx-section-title">Orçamento mensal</h2>
       <p class="text-xs text-slate-500">Limite de gasto por categoria. O painel avisa quando você passa.</p>
@@ -172,7 +191,7 @@ const today = () => new Date().toISOString().slice(0, 10);
   </section>
 
   <!-- Regras de categoria -->
-  <section class="mx-card mt-6 mx-rise">
+  <section class="mx-card mt-6 mx-rise" [class]="show('orc')">
     <div class="px-4 sm:px-5 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 class="mx-section-title">Regras de categoria</h2>
@@ -246,7 +265,8 @@ const today = () => new Date().toISOString().slice(0, 10);
             <select class="mx-field mt-1" name="accountId" [(ngModel)]="f.accountId">
               @for (a of mixco.accounts(); track a.id) { <option [value]="a.id">{{ a.name }}</option> }
             </select></label>
-          <div class="pt-2 flex justify-end gap-3">
+          <div class="pt-2 flex flex-wrap justify-end gap-3">
+            @if (f.id) { <button type="button" class="btn-link-danger mr-auto" (click)="deleteTxFromForm()">Excluir</button> }
             <button type="button" class="btn-secondary" (click)="txForm.set(null)">Cancelar</button>
             <button type="submit" class="btn-primary">Salvar</button>
           </div>
@@ -271,6 +291,34 @@ export class MixcoCashflowComponent implements OnInit {
   ruleKeyword = '';
   ruleCategory = BUDGET_CATEGORIES[0];
   visibleTxs = computed(() => this.mixco.transactions().filter(t => !this.onlyUncategorized() || t.category === 'Outros'));
+  readonly icons = { prev: ChevronLeft, next: ChevronRight };
+  tabs = [
+    { id: 'lanc', label: 'Lançamentos' }, { id: 'contas', label: 'Contas' },
+    { id: 'fixas', label: 'Contas fixas' }, { id: 'orc', label: 'Orçamento' },
+  ] as const;
+  tab = signal<'lanc' | 'contas' | 'fixas' | 'orc'>('lanc');
+  /** Celular mostra só a aba ativa; telas grandes (lg+) mostram tudo. */
+  show(id: string): string { return this.tab() === id ? '' : 'max-lg:hidden'; }
+
+  monthLabel = computed(() => {
+    const [y, m] = this.mixco.month().split('-').map(Number);
+    return new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }).replace(' de ', ' ').replace('.', '');
+  });
+  isCurrentMonth = computed(() => {
+    const d = new Date();
+    return this.mixco.month() >= `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+  shiftMonth(delta: number) {
+    const [y, m] = this.mixco.month().split('-').map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+    void this.mixco.setMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+  deleteTxFromForm() {
+    const id = this.txForm()?.id;
+    if (!id) return;
+    void this.mixco.remove('transactions', id, 'Lançamento excluído.').then(ok => ok && this.txForm.set(null));
+  }
+
   catColor = colorOfCategory;
   isInternal(c: string) { return INTERNAL_CATEGORIES.includes(c); }
   budgetLimit: number | null = null;

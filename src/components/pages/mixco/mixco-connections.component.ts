@@ -13,7 +13,7 @@ declare global { interface Window { PluggyConnect?: any } }
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-<main class="p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
+<main class="mx-page p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
   <div class="mb-6 mx-rise">
     <h1 class="mx-title">Conexões bancárias</h1>
     <p class="mx-subtitle">Contas, cartões, lançamentos e investimentos entram sozinhos pela Pluggy. Só leitura: o MiXCo não movimenta dinheiro.</p>
