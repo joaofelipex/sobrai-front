@@ -38,7 +38,9 @@ import { RingComponent } from './mx-visuals';
           <p class="mt-1 text-sm tabular text-slate-500"><b class="text-slate-900">{{ g.savedAmount | brl }}</b> de {{ g.targetAmount | brl }}</p>
           <p class="mt-2 text-[13px] leading-snug" [class.text-[var(--color-loss)]]="late(g)" [class.text-slate-500]="!late(g)">{{ plan(g) }}</p>
           <div class="mt-3 flex items-center gap-1 text-sm">
-            <button type="button" class="btn-primary !py-1.5 !px-3 !text-[13px]" (click)="deposit.set({ goal: g, amount: monthly(g) || null })">Registrar aporte</button>
+            @if (g.savedAmount < g.targetAmount) {
+              <button type="button" class="btn-primary !py-1.5 !px-3 !text-[13px]" (click)="deposit.set({ goal: g, amount: monthly(g) || null })">Registrar aporte</button>
+            }
             <button type="button" class="btn-link" (click)="edit(g)">Editar</button>
             <button type="button" class="btn-link-danger" (click)="mixco.remove('goals', g.id, 'Meta excluída.')">Excluir</button>
           </div>

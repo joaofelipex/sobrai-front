@@ -69,6 +69,8 @@ export interface MxSummary {
   cardDebt: number;
   uncategorized: number;
   insights: MxInsight[];
+  upcoming: MxUpcoming[];
+  projection: { pendingOut: number; pendingIn: number; projectedBalance: number };
   emergencyFund: { liquid: number; avgMonthlyExpense: number; months: number | null };
   history: { month: string; assets: number; liabilities: number; netWorth: number }[];
 }
@@ -126,4 +128,25 @@ export interface PluggyStatus {
   configured: boolean;
   items: PluggyItem[];
   lastSyncAt: string | null;
+}
+
+export interface MxRecurring {
+  id: string;
+  description: string;
+  type: 'income' | 'expense';
+  amount: number;
+  dayOfMonth: number;
+  category: string;
+}
+
+/** Conta fixa projetada para o mês: `paid` quando já existe lançamento com a mesma descrição. */
+export interface MxUpcoming {
+  id: string;
+  description: string;
+  type: 'income' | 'expense';
+  amount: number;
+  category: string;
+  day: number;
+  paid: boolean;
+  overdue: boolean;
 }

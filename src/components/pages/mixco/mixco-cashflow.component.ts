@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MixcoService } from '../../../services/mixco.service';
-import { ACCOUNT_KIND_LABELS, BUDGET_CATEGORIES, EXPENSE_CATEGORIES, INCOME_CATEGORIES, INTERNAL_CATEGORIES, MxAccount, MxTransaction } from '../../../models/mixco.model';
+import { ACCOUNT_KIND_LABELS, BUDGET_CATEGORIES, EXPENSE_CATEGORIES, INCOME_CATEGORIES, INTERNAL_CATEGORIES, MxAccount, MxRecurring, MxTransaction } from '../../../models/mixco.model';
 import { BrlPipe } from './brl.pipe';
 import { colorOfCategory } from './mx-visuals';
 
@@ -93,6 +93,61 @@ const today = () => new Date().toISOString().slice(0, 10);
       <p class="p-6 text-sm text-slate-500 text-center">Nenhum lançamento neste mês.</p>
     }
   </section>
+
+  <!-- Contas fixas -->
+  <section class="mx-card mb-6 mx-rise">
+    <div class="px-4 sm:px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+      <div>
+        <h2 class="mx-section-title">Contas fixas</h2>
+        <p class="text-xs text-slate-500">Aluguel, assinaturas, parcelas. O MiXCo marca como paga quando acha um lançamento com a mesma descrição.</p>
+      </div>
+      <button type="button" class="btn-secondary" (click)="newRecurring()">Nova conta fixa</button>
+    </div>
+    @for (r of mixco.recurring(); track r.id) {
+      <div class="mx-row">
+        <span class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-sm font-semibold shrink-0">{{ r.dayOfMonth }}</span>
+        <div class="flex-1 min-w-0">
+          <p class="font-medium text-slate-900 truncate">{{ r.description }}</p>
+          <p class="text-xs text-slate-500">Todo dia {{ r.dayOfMonth }} · {{ r.category }}</p>
+        </div>
+        <p class="font-semibold tabular" [class.text-[var(--color-gain)]]="r.type === 'income'">{{ r.type === 'income' ? '+' : '' }}{{ r.amount | brl }}</p>
+        <button type="button" class="btn-link" (click)="editRecurring(r)">Editar</button>
+        <button type="button" class="btn-link-danger" (click)="mixco.remove('recurring', r.id, 'Conta fixa removida.')">Excluir</button>
+      </div>
+    } @empty {
+      <p class="p-6 text-sm text-slate-500 text-center">Nenhuma conta fixa. Cadastre as principais para ver a projeção do mês.</p>
+    }
+  </section>
+
+  @if (recurringForm(); as f) {
+    <div class="mx-backdrop" (click)="recurringForm.set(null)">
+      <div class="mx-modal max-w-md" (click)="$event.stopPropagation()">
+        <h3 class="mx-modal-title">{{ f.id ? 'Editar conta fixa' : 'Nova conta fixa' }}</h3>
+        <form (ngSubmit)="saveRecurring()" class="p-6 space-y-4">
+          <label class="block text-[13px] font-medium text-slate-600">Descrição
+            <input class="mx-field mt-1" name="rd" [(ngModel)]="f.description" required placeholder="Ex: Aluguel"></label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block text-[13px] font-medium text-slate-600">Valor (R$)
+              <input class="mx-field mt-1" type="number" step="0.01" min="0.01" name="ra" [(ngModel)]="f.amount" required></label>
+            <label class="block text-[13px] font-medium text-slate-600">Dia do vencimento
+              <input class="mx-field mt-1" type="number" min="1" max="31" name="rday" [(ngModel)]="f.dayOfMonth" required></label>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block text-[13px] font-medium text-slate-600">Tipo
+              <select class="mx-field mt-1" name="rt" [(ngModel)]="f.type"><option value="expense">Despesa</option><option value="income">Receita</option></select></label>
+            <label class="block text-[13px] font-medium text-slate-600">Categoria
+              <select class="mx-field mt-1" name="rc2" [(ngModel)]="f.category">
+                @for (c of (f.type === 'income' ? incomeCategories : budgetCategories); track c) { <option [value]="c">{{ c }}</option> }
+              </select></label>
+          </div>
+          <div class="pt-2 flex justify-end gap-3">
+            <button type="button" class="btn-secondary" (click)="recurringForm.set(null)">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
 
   <!-- Orçamento -->
   <section class="mx-card mx-rise">
@@ -267,6 +322,18 @@ export class MixcoCashflowComponent implements OnInit {
     if (ok) this.txForm.set(null);
   }
   deleteTx(t: MxTransaction) { void this.mixco.remove('transactions', t.id, 'Lançamento excluído.'); }
+
+  recurringForm = signal<Partial<MxRecurring> | null>(null);
+  newRecurring() { this.recurringForm.set({ type: 'expense', category: BUDGET_CATEGORIES[0], dayOfMonth: 5 }); }
+  editRecurring(r: MxRecurring) { this.recurringForm.set({ ...r }); }
+  async saveRecurring() {
+    const f = this.recurringForm();
+    if (!f?.description || !(Number(f.amount) > 0) || !(Number(f.dayOfMonth) >= 1)) return;
+    const ok = await this.mixco.save('recurring', {
+      id: f.id, description: f.description, type: f.type, amount: Number(f.amount), dayOfMonth: Math.round(Number(f.dayOfMonth)), category: f.category,
+    }, 'Conta fixa salva.');
+    if (ok) this.recurringForm.set(null);
+  }
 
   async addRule() {
     if (!this.ruleKeyword.trim()) return;

@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, computed, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LucideAngularModule, PiggyBank, ShieldCheck, Receipt, TrendingUp, RefreshCw, ArrowUpRight, ArrowDownRight, ArrowRight, Landmark, CircleAlert, TriangleAlert, Info, CircleCheck } from 'lucide-angular';
+import { LucideAngularModule, PiggyBank, ShieldCheck, Receipt, TrendingUp, RefreshCw, ArrowUpRight, ArrowDownRight, ArrowRight, Landmark, Check, CircleAlert, TriangleAlert, Info, CircleCheck } from 'lucide-angular';
 import { MixcoService } from '../../../services/mixco.service';
 import { ASSET_CLASS_LABELS, MxInsight } from '../../../models/mixco.model';
 import { LineChartComponent } from '../../shared/chart/line-chart.component';
@@ -113,6 +113,37 @@ const STALE_MS = 6 * 60 * 60 * 1000;
         </section>
       }
 
+      <!-- Contas fixas e projeção do mês -->
+      @if (s.upcoming.length) {
+        <section class="mx-card p-5 sm:p-6 mb-4 sm:mb-6 mx-rise" style="animation-delay: 230ms">
+          <div class="flex flex-wrap items-end justify-between gap-3 mb-4">
+            <div>
+              <h2 class="mx-section-title">Contas fixas do mês</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Pendentes: {{ s.projection.pendingOut | brl }} a pagar{{ s.projection.pendingIn ? ' · ' + (s.projection.pendingIn | brl) + ' a receber' : '' }}</p>
+            </div>
+            <div class="text-right">
+              <p class="mx-label">Projeção até o fim do mês</p>
+              <p class="text-xl font-semibold tabular tracking-tight" [class.text-[var(--color-loss)]]="s.projection.projectedBalance < 0">{{ s.projection.projectedBalance | brl }}</p>
+            </div>
+          </div>
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            @for (u of s.upcoming; track u.id) {
+              <li class="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0" [class.opacity-50]="u.paid">
+                <span class="w-9 h-9 rounded-xl flex flex-col items-center justify-center text-[11px] leading-none font-semibold shrink-0"
+                      [class]="u.overdue ? 'bg-rose-50 text-[var(--color-loss)]' : u.paid ? 'bg-emerald-50 text-[var(--color-gain)]' : 'bg-slate-100 text-slate-600'">
+                  @if (u.paid) { <lucide-icon [img]="icons.check" [size]="16"></lucide-icon> } @else { <span class="text-sm">{{ u.day }}</span> }
+                </span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate" [class.line-through]="u.paid">{{ u.description }}</p>
+                  <p class="text-[11px] text-slate-500">{{ u.paid ? 'Registrado' : u.overdue ? 'Venceu dia ' + u.day + ' · sem lançamento' : 'Vence dia ' + u.day }}</p>
+                </div>
+                <p class="text-sm font-semibold tabular" [class.text-[var(--color-gain)]]="u.type === 'income'">{{ u.type === 'income' ? '+' : '' }}{{ u.amount | brl }}</p>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         <section class="mx-card p-5 sm:p-6 mx-rise" style="animation-delay: 260ms">
           <h2 class="mx-section-title mb-4">Receitas e despesas · 6 meses</h2>
@@ -175,7 +206,7 @@ const STALE_MS = 6 * 60 * 60 * 1000;
 export class MixcoOverviewComponent implements OnInit {
   mixco = inject(MixcoService);
   readonly Math = Math;
-  readonly icons = { refresh: RefreshCw, up: ArrowUpRight, down: ArrowDownRight, go: ArrowRight, landmark: Landmark };
+  readonly icons = { refresh: RefreshCw, up: ArrowUpRight, down: ArrowDownRight, go: ArrowRight, landmark: Landmark, check: Check };
   s = this.mixco.summary;
 
   isEmpty = computed(() => {

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../environments/environment';
 import { ToastService } from './toast.service';
-import { MxAccount, MxAsset, MxBudget, MxGoal, MxLiability, MxRule, MxSummary, MxTransaction, PluggyStatus } from '../models/mixco.model';
+import { MxAccount, MxAsset, MxBudget, MxGoal, MxLiability, MxRecurring, MxRule, MxSummary, MxTransaction, PluggyStatus } from '../models/mixco.model';
 
-type Resource = 'accounts' | 'transactions' | 'assets' | 'liabilities' | 'goals' | 'rules';
+type Resource = 'accounts' | 'transactions' | 'assets' | 'liabilities' | 'goals' | 'rules' | 'recurring';
 
 /** Mês corrente no formato AAAA-MM. */
 export function currentMonth(): string {
@@ -31,6 +31,7 @@ export class MixcoService {
   budgets = signal<MxBudget[]>([]);
   goals = signal<MxGoal[]>([]);
   rules = signal<MxRule[]>([]);
+  recurring = signal<MxRecurring[]>([]);
   pluggy = signal<PluggyStatus | null>(null);
   syncing = signal(false);
   month = signal(currentMonth());
@@ -41,7 +42,7 @@ export class MixcoService {
     this.loading.set(true);
     try {
       const m = this.month();
-      const [summary, accounts, transactions, assets, liabilities, budgets, goals, rules, pluggy] = await Promise.all([
+      const [summary, accounts, transactions, assets, liabilities, budgets, goals, rules, recurring, pluggy] = await Promise.all([
         firstValueFrom(this.http.get<MxSummary>(`${this.api}/summary?month=${m}`)),
         firstValueFrom(this.http.get<MxAccount[]>(`${this.api}/accounts`)),
         firstValueFrom(this.http.get<MxTransaction[]>(`${this.api}/transactions?month=${m}`)),
@@ -50,6 +51,7 @@ export class MixcoService {
         firstValueFrom(this.http.get<MxBudget[]>(`${this.api}/budgets`)),
         firstValueFrom(this.http.get<MxGoal[]>(`${this.api}/goals`)),
         firstValueFrom(this.http.get<MxRule[]>(`${this.api}/rules`)),
+        firstValueFrom(this.http.get<MxRecurring[]>(`${this.api}/recurring`)),
         firstValueFrom(this.http.get<PluggyStatus>(`${this.api}/pluggy/status`)),
       ]);
       this.summary.set(summary);
@@ -60,6 +62,7 @@ export class MixcoService {
       this.budgets.set(budgets);
       this.goals.set(goals);
       this.rules.set(rules);
+      this.recurring.set(recurring);
       this.pluggy.set(pluggy);
     } catch (err) {
       console.error('MiXCo: falha ao carregar', err);
