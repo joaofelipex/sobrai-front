@@ -323,9 +323,11 @@ export class MixcoCashflowComponent implements OnInit {
   isInternal(c: string) { return INTERNAL_CATEGORIES.includes(c); }
   budgetLimit: number | null = null;
 
+  /** Igual ao painel: pagamento de fatura e transferência entre contas suas não são renda nem gasto. */
   totals = computed(() => {
     let income = 0, expense = 0;
     for (const t of this.mixco.transactions()) {
+      if (INTERNAL_CATEGORIES.includes(t.category)) continue;
       if (t.type === 'income') income += t.amount; else expense += t.amount;
     }
     return { income, expense };
