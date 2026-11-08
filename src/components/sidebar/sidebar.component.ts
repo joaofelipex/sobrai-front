@@ -44,7 +44,7 @@ export class SidebarComponent {
   isOpen = this.sidebarService.isOpen;
 
   // Signal computado que obtém o nome do usuário/empresa do serviço de onboarding.
-  userName = computed(() => this.onboardingService.companyProfile()?.name || 'Usuário');
+  userName = computed(() => this.onboardingService.companyProfile()?.name || 'Minha conta');
 
   // Ícones avulsos usados no template (biblioteca Lucide).
   readonly icons = { x: X, logOut: LogOut };
@@ -52,42 +52,26 @@ export class SidebarComponent {
   // Itens de navegação, agrupados por área.
   navGroups: NavGroup[] = [
     {
-      label: 'Geral',
-      items: [{ path: 'painel-principal', label: 'Painel', icon: LayoutDashboard }],
-    },
-    {
-      label: 'MiXCo · Pessoal',
+      label: 'MiXCo',
       items: [
         { path: 'mixco', label: 'Visão geral', icon: Gem },
-        { path: 'mixco/patrimonio', label: 'Patrimônio', icon: Wallet },
         { path: 'mixco/fluxo', label: 'Fluxo de caixa', icon: ArrowLeftRight },
+        { path: 'mixco/patrimonio', label: 'Patrimônio', icon: Wallet },
+        { path: 'mixco/metas', label: 'Metas', icon: Target },
+        { path: 'mixco/conexoes', label: 'Conexões bancárias', icon: Landmark },
       ],
     },
+    // Módulo original do Sobrai (MEI / empresa), mantido à parte do foco pessoal.
     {
-      label: 'Financeiro',
+      label: 'Negócio (Sobrai)',
       items: [
+        { path: 'painel-principal', label: 'Painel', icon: LayoutDashboard },
         { path: 'receitas-e-despesas', label: 'Receitas e Despesas', icon: ReceiptText },
         { path: 'recorrencias', label: 'Recorrências', icon: Repeat },
-        { path: 'integracao-bancaria', label: 'Integração Bancária', icon: Landmark },
-      ],
-    },
-    {
-      label: 'Fiscal',
-      items: [{ path: 'notas-fiscais', label: 'Notas Fiscais', icon: FileText }],
-    },
-    {
-      label: 'Análise',
-      items: [
+        { path: 'notas-fiscais', label: 'Notas Fiscais', icon: FileText },
         { path: 'analise-financeira', label: 'Análise Financeira', icon: TrendingUp },
         { path: 'insights-ia', label: 'Insights', icon: Lightbulb },
-        { path: 'metas', label: 'Metas', icon: Target },
         { path: 'relatorios', label: 'Relatórios', icon: BarChart3 },
-      ],
-    },
-    {
-      label: 'Conta',
-      items: [
-        { path: 'assinatura', label: 'Assinatura', icon: CreditCard },
         { path: 'configuracoes', label: 'Configurações', icon: Settings },
       ],
     },

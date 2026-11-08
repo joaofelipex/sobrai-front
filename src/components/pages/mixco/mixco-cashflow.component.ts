@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MixcoService } from '../../../services/mixco.service';
-import { ACCOUNT_KIND_LABELS, EXPENSE_CATEGORIES, INCOME_CATEGORIES, MxAccount, MxTransaction } from '../../../models/mixco.model';
+import { ACCOUNT_KIND_LABELS, BUDGET_CATEGORIES, EXPENSE_CATEGORIES, INCOME_CATEGORIES, INTERNAL_CATEGORIES, MxAccount, MxTransaction } from '../../../models/mixco.model';
 import { BrlPipe } from './brl.pipe';
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -34,9 +34,13 @@ const today = () => new Date().toISOString().slice(0, 10);
           <p class="text-xs text-slate-500">{{ kindLabel(a.kind) }}{{ a.institution ? ' · ' + a.institution : '' }}</p>
           <p class="font-medium text-slate-800">{{ a.name }}</p>
           <p class="text-xl font-semibold tabular mt-1" [class.text-red-700]="a.balance < 0">{{ a.balance | brl }}</p>
+          @if (a.kind === 'credit') { <p class="text-xs text-slate-500">Valor em aberto da fatura</p> }
           <div class="mt-2 text-sm space-x-3">
-            <button type="button" class="text-slate-600 hover:text-emerald-700" (click)="editAccount(a)">Editar</button>
-            <button type="button" class="text-slate-600 hover:text-red-700" (click)="deleteAccount(a)">Excluir</button>
+            @if (a.source === 'pluggy') { <span class="text-xs text-emerald-700">Sincronizada (Pluggy)</span> }
+            @else {
+              <button type="button" class="text-slate-600 hover:text-emerald-700" (click)="editAccount(a)">Editar</button>
+              <button type="button" class="text-slate-600 hover:text-red-700" (click)="deleteAccount(a)">Excluir</button>
+            }
           </div>
         </div>
       } @empty {
@@ -52,13 +56,16 @@ const today = () => new Date().toISOString().slice(0, 10);
         <h2 class="font-semibold text-slate-800">Lançamentos</h2>
         <p class="text-xs text-slate-500 tabular">Entradas {{ totals().income | brl }} · Saídas {{ totals().expense | brl }}</p>
       </div>
-      <button type="button" class="btn-primary" [disabled]="!mixco.accounts().length" (click)="newTx()">Adicionar</button>
+      <div class="flex items-center gap-3">
+        <label class="text-sm text-slate-600 flex items-center gap-2"><input type="checkbox" [checked]="onlyUncategorized()" (change)="onlyUncategorized.set(!onlyUncategorized())"> Só sem categoria ({{ mixco.summary()?.uncategorized ?? 0 }})</label>
+        <button type="button" class="btn-primary" [disabled]="!mixco.accounts().length" (click)="newTx()">Adicionar</button>
+      </div>
     </div>
-    @for (t of mixco.transactions(); track t.id) {
+    @for (t of visibleTxs(); track t.id) {
       <div class="flex items-center gap-3 px-4 py-3 border-b border-slate-100 last:border-0">
         <div class="flex-1 min-w-0">
           <p class="font-medium text-slate-800 truncate">{{ t.description }}</p>
-          <p class="text-xs text-slate-500">{{ t.date.slice(8) }}/{{ t.date.slice(5, 7) }} · {{ t.category }} · {{ accountName(t.accountId) }}</p>
+          <p class="text-xs text-slate-500">{{ t.date.slice(8) }}/{{ t.date.slice(5, 7) }} · {{ t.category }}{{ isInternal(t.category) ? ' (fora do fluxo)' : '' }} · {{ accountName(t.accountId) }}</p>
         </div>
         <p class="font-medium tabular" [class.text-success-700]="t.type === 'income'" [class.text-red-700]="t.type === 'expense'">
           {{ t.type === 'income' ? '+' : '−' }} {{ t.amount | brl }}
@@ -88,10 +95,34 @@ const today = () => new Date().toISOString().slice(0, 10);
     }
     <form class="p-4 flex flex-col sm:flex-row gap-3" (ngSubmit)="addBudget()">
       <select class="mx-field sm:flex-1" name="cat" [(ngModel)]="budgetCategory">
-        @for (c of expenseCategories; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of budgetCategories; track c) { <option [value]="c">{{ c }}</option> }
       </select>
       <input class="mx-field sm:w-40" type="number" min="1" step="0.01" name="lim" [(ngModel)]="budgetLimit" placeholder="Limite (R$)" required>
       <button type="submit" class="btn-primary">Definir limite</button>
+    </form>
+  </section>
+
+  <!-- Regras de categoria -->
+  <section class="bg-white border border-slate-200/80 rounded-lg mt-6">
+    <div class="p-4 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <h2 class="font-semibold text-slate-800">Regras de categoria</h2>
+        <p class="text-xs text-slate-500">Se a descrição contém a palavra, o lançamento recebe a categoria (valem para novas importações).</p>
+      </div>
+      <button type="button" class="btn-secondary" (click)="mixco.applyRules()">Aplicar aos sem categoria</button>
+    </div>
+    @for (r of mixco.rules(); track r.id) {
+      <div class="flex items-center gap-3 px-4 py-2.5 border-b border-slate-100">
+        <p class="flex-1 text-sm text-slate-800">"{{ r.keyword }}" → <b>{{ r.category }}</b></p>
+        <button type="button" class="text-sm text-slate-600 hover:text-red-700" (click)="mixco.remove('rules', r.id, 'Regra removida.')">Remover</button>
+      </div>
+    }
+    <form class="p-4 flex flex-col sm:flex-row gap-3" (ngSubmit)="addRule()">
+      <input class="mx-field sm:flex-1" name="kw" [(ngModel)]="ruleKeyword" placeholder='Palavra na descrição (ex: "uber")' required>
+      <select class="mx-field sm:w-52" name="rc" [(ngModel)]="ruleCategory">
+        @for (c of expenseCategories; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+      <button type="submit" class="btn-primary">Criar regra</button>
     </form>
   </section>
 
@@ -161,11 +192,17 @@ export class MixcoCashflowComponent implements OnInit {
 
   accountKinds = Object.entries(ACCOUNT_KIND_LABELS);
   expenseCategories = EXPENSE_CATEGORIES;
+  budgetCategories = BUDGET_CATEGORIES;
   incomeCategories = INCOME_CATEGORIES;
 
   accountForm = signal<Partial<MxAccount> | null>(null);
   txForm = signal<Partial<MxTransaction> | null>(null);
-  budgetCategory = EXPENSE_CATEGORIES[0];
+  budgetCategory = BUDGET_CATEGORIES[0];
+  onlyUncategorized = signal(false);
+  ruleKeyword = '';
+  ruleCategory = BUDGET_CATEGORIES[0];
+  visibleTxs = computed(() => this.mixco.transactions().filter(t => !this.onlyUncategorized() || t.category === 'Outros'));
+  isInternal(c: string) { return INTERNAL_CATEGORIES.includes(c); }
   budgetLimit: number | null = null;
 
   totals = computed(() => {
@@ -215,6 +252,11 @@ export class MixcoCashflowComponent implements OnInit {
     if (ok) this.txForm.set(null);
   }
   deleteTx(t: MxTransaction) { void this.mixco.remove('transactions', t.id, 'Lançamento excluído.'); }
+
+  async addRule() {
+    if (!this.ruleKeyword.trim()) return;
+    if (await this.mixco.save('rules', { keyword: this.ruleKeyword.trim(), category: this.ruleCategory }, 'Regra criada.')) this.ruleKeyword = '';
+  }
 
   async addBudget() {
     if (!(Number(this.budgetLimit) > 0)) return;

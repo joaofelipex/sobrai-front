@@ -13,9 +13,11 @@ import { RecurringComponent } from './components/pages/recurring/recurring.compo
 import { MixcoOverviewComponent } from './components/pages/mixco/mixco-overview.component';
 import { MixcoWealthComponent } from './components/pages/mixco/mixco-wealth.component';
 import { MixcoCashflowComponent } from './components/pages/mixco/mixco-cashflow.component';
+import { MixcoGoalsComponent } from './components/pages/mixco/mixco-goals.component';
+import { MixcoConnectionsComponent } from './components/pages/mixco/mixco-connections.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'painel-principal', pathMatch: 'full' },
+    { path: '', redirectTo: 'mixco', pathMatch: 'full' },
     { path: 'painel-principal', component: DashboardComponent, title: 'Painel Principal | Sobrai' },
     { path: 'receitas-e-despesas', component: FinancialComponent, title: 'Receitas e Despesas | Sobrai' },
     { path: 'integracao-bancaria', component: BankIntegrationComponent, title: 'Integração Bancária | Sobrai' },
@@ -27,8 +29,10 @@ export const routes: Routes = [
     { path: 'relatorios', component: ReportsComponent, title: 'Relatórios | Sobrai' },
     { path: 'assinatura', component: SubscriptionComponent, title: 'Assinatura | Sobrai' },
     { path: 'configuracoes', component: SettingsComponent, title: 'Configurações | Sobrai' },
-    { path: 'mixco', component: MixcoOverviewComponent, title: 'MiXCo | Sobrai' },
+    { path: 'mixco', component: MixcoOverviewComponent, title: 'MiXCo' },
     { path: 'mixco/patrimonio', component: MixcoWealthComponent, title: 'Patrimônio | MiXCo' },
     { path: 'mixco/fluxo', component: MixcoCashflowComponent, title: 'Fluxo de caixa | MiXCo' },
-    { path: '**', redirectTo: 'painel-principal' } // Rota coringa para redirecionar URLs inválidas
+    { path: 'mixco/metas', component: MixcoGoalsComponent, title: 'Metas | MiXCo' },
+    { path: 'mixco/conexoes', component: MixcoConnectionsComponent, title: 'Conexões bancárias | MiXCo' },
+    { path: '**', redirectTo: 'mixco' } // Rota coringa para redirecionar URLs inválidas
 ];

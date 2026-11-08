@@ -6,4 +6,6 @@ const apiHost = typeof location !== 'undefined' && location.hostname ? location.
 export const environment = {
   production: false,
   backendUrl: `http://${apiHost}:3001`,
+  // Widget Pluggy Connect (abre o fluxo de login do banco). Confira a versão atual em docs.pluggy.ai.
+  pluggyConnectScript: 'https://cdn.pluggy.ai/pluggy-connect/v2.7.0/pluggy-connect.js',
 };

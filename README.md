@@ -49,7 +49,8 @@ Quem é MEI ou trabalha por conta própria costuma controlar o dinheiro numa pla
 | 🏛️ | **NFS-e Nacional** | Geração e assinatura da DPS, envio à SEFIN, download do XML e cancelamento |
 | 🎯 | **Metas** | Metas de faturamento ou economia, com progresso e prazo |
 | 📈 | **Análise e relatórios** | Receitas vs. despesas por período, despesas por categoria, lucro líquido |
-| 💎 | **MiXCo (pessoal)** | Gestora de patrimônio: patrimônio líquido, evolução mensal, alocação, contas e lançamentos, orçamento por categoria, reserva de emergência e endividamento (rotas `#/mixco`) |
+| 💎 | **MiXCo (pessoal)** | Foco do app: patrimônio líquido, alertas do que fazer agora, tendência de 6 meses, alocação, orçamento por categoria, metas com aporte mensal necessário, reserva de emergência e endividamento |
+| 🏦 | **Pluggy (open finance)** | Conecta bancos, cartões e investimentos; importa e categoriza sozinho, sem duplicar |
 | 💡 | **Insights** | Recomendações com Google Gemini, chamadas pelo servidor (opcional) |
 
 <br>
@@ -110,6 +111,14 @@ Detalhes no [repositório da API](https://github.com/joaofelipex/sobrai-back).
 </table>
 
 <br>
+
+## 🏦 Conectar seus bancos (Pluggy)
+
+1. No [dashboard da Pluggy](https://dashboard.pluggy.ai), copie o **Client ID** e o **Client Secret** da sua aplicação.
+2. Na API (`sobrai-back`), preencha `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` no `.env` e reinicie.
+3. No app, abra **Conexões bancárias → Conectar banco**. Ou, se já tem uma conexão na Pluggy, cole o **Item ID**.
+
+O app sincroniza sozinho ao abrir quando passou de 6 h. As credenciais ficam só no servidor. O widget é carregado de `pluggyConnectScript` em `src/environments/environment.ts`: confira a versão atual na documentação da Pluggy.
 
 ## 🚀 Como rodar
 

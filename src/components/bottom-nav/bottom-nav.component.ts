@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LucideAngularModule, LucideIconData, LayoutDashboard, ReceiptText, FileText, Target, Menu } from 'lucide-angular';
+import { LucideAngularModule, LucideIconData, Gem, ArrowLeftRight, Wallet, Target, Menu } from 'lucide-angular';
 import { SidebarService } from '../../services/sidebar.service';
 
 interface Tab {
@@ -25,9 +25,9 @@ export class BottomNavComponent {
   readonly menuIcon = Menu;
 
   tabs: Tab[] = [
-    { path: 'painel-principal', label: 'Painel', icon: LayoutDashboard },
-    { path: 'receitas-e-despesas', label: 'Lançamentos', icon: ReceiptText },
-    { path: 'notas-fiscais', label: 'Notas', icon: FileText },
-    { path: 'metas', label: 'Metas', icon: Target },
+    { path: 'mixco', label: 'Início', icon: Gem },
+    { path: 'mixco/fluxo', label: 'Fluxo', icon: ArrowLeftRight },
+    { path: 'mixco/patrimonio', label: 'Patrimônio', icon: Wallet },
+    { path: 'mixco/metas', label: 'Metas', icon: Target },
   ];
 }

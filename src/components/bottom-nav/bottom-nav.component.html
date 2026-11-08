@@ -4,6 +4,7 @@
       <li>
         <a [routerLink]="['/', tab.path]"
            routerLinkActive="text-emerald-700"
+           [routerLinkActiveOptions]="{ exact: tab.path === 'mixco' }"
            class="flex flex-col items-center justify-center gap-0.5 h-14 text-slate-500 active:bg-slate-100">
           <lucide-icon [img]="tab.icon" [size]="21" [strokeWidth]="1.75"></lucide-icon>
           <span class="text-[11px] font-medium leading-none">{{ tab.label }}</span>
