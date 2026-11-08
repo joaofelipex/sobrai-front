@@ -13,15 +13,15 @@ declare global { interface Window { PluggyConnect?: any } }
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-<main class="p-4 sm:p-6 lg:p-8">
-  <div class="mb-6">
-    <h1 class="text-xl font-semibold text-slate-900">Conexões bancárias</h1>
-    <p class="text-sm text-slate-500 mt-0.5">Contas, cartões, lançamentos e investimentos entram sozinhos pela Pluggy. Só leitura: o MiXCo não movimenta dinheiro.</p>
+<main class="p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
+  <div class="mb-6 mx-rise">
+    <h1 class="mx-title">Conexões bancárias</h1>
+    <p class="mx-subtitle">Contas, cartões, lançamentos e investimentos entram sozinhos pela Pluggy. Só leitura: o MiXCo não movimenta dinheiro.</p>
   </div>
 
   @if (mixco.pluggy(); as p) {
     @if (!p.configured) {
-      <section class="rounded-lg border border-amber-200 bg-amber-50 text-amber-900 p-5 mb-6">
+      <section class="rounded-2xl ring-1 ring-amber-200 bg-amber-50 text-amber-900 p-5 sm:p-6 mb-6 mx-rise">
         <h2 class="font-semibold">Falta configurar as credenciais da Pluggy</h2>
         <ol class="mt-2 text-sm list-decimal pl-5 space-y-1">
           <li>No <b>dashboard.pluggy.ai</b>, abra sua aplicação e copie o <b>Client ID</b> e o <b>Client Secret</b>.</li>
@@ -31,10 +31,10 @@ declare global { interface Window { PluggyConnect?: any } }
         <p class="mt-3 text-sm">As chaves ficam só no servidor: nunca vão para o navegador nem para o Git.</p>
       </section>
     } @else {
-      <section class="bg-white border border-slate-200/80 rounded-lg p-5 mb-6">
+      <section class="mx-card p-5 sm:p-6 mb-6 mx-rise">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 class="font-semibold text-slate-800">Conectar um banco</h2>
+            <h2 class="mx-section-title">Conectar um banco</h2>
             <p class="text-sm text-slate-500">Abre o login seguro da Pluggy. Suas senhas não passam pelo MiXCo.</p>
           </div>
           <button type="button" class="btn-primary" [disabled]="busy()" (click)="connect()">{{ busy() ? 'Abrindo…' : 'Conectar banco' }}</button>
@@ -46,22 +46,22 @@ declare global { interface Window { PluggyConnect?: any } }
       </section>
     }
 
-    <section class="bg-white border border-slate-200/80 rounded-lg">
-      <div class="flex items-center justify-between p-4 border-b border-slate-200/80">
-        <h2 class="font-semibold text-slate-800">Conexões ativas</h2>
+    <section class="mx-card mx-rise">
+      <div class="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-slate-100">
+        <h2 class="mx-section-title">Conexões ativas</h2>
         <button type="button" class="btn-secondary" [disabled]="!p.configured || !p.items.length || mixco.syncing()" (click)="mixco.syncPluggy()">
           {{ mixco.syncing() ? 'Sincronizando…' : 'Sincronizar agora' }}
         </button>
       </div>
       @for (i of p.items; track i.itemId) {
-        <div class="px-4 py-3 border-b border-slate-100 last:border-0 flex flex-wrap items-center gap-x-4 gap-y-1">
+        <div class="mx-row flex-wrap gap-y-1">
           <div class="flex-1 min-w-[12rem]">
             <p class="font-medium text-slate-800">{{ i.connector || 'Banco' }}</p>
             <p class="text-xs text-slate-500 break-all">{{ i.itemId }}</p>
-            @if (i.lastError) { <p class="text-xs text-red-700 mt-1">Erro: {{ i.lastError }}</p> }
+            @if (i.lastError) { <p class="text-xs text-[var(--color-loss)] mt-1">Erro: {{ i.lastError }}</p> }
           </div>
           <p class="text-sm text-slate-500">{{ i.lastSyncAt ? 'Sincronizado em ' + fmt(i.lastSyncAt) : 'Nunca sincronizado' }}</p>
-          <button type="button" class="text-sm text-slate-600 hover:text-red-700" (click)="mixco.removePluggyItem(i.itemId)">Remover</button>
+          <button type="button" class="btn-link-danger" (click)="mixco.removePluggyItem(i.itemId)">Remover</button>
         </div>
       } @empty {
         <p class="p-6 text-sm text-slate-500 text-center">Nenhum banco conectado ainda.</p>

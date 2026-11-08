@@ -1,6 +1,6 @@
 <!-- Fundo escurecido no mobile quando o menu está aberto; clicar fecha. -->
 <div
-  class="fixed inset-0 bg-slate-900/40 z-30 transition-opacity md:hidden"
+  class="fixed inset-0 bg-ink-950/50 backdrop-blur-sm z-30 transition-opacity md:hidden"
   [class.opacity-100]="isOpen()"
   [class.opacity-0]="!isOpen()"
   [class.pointer-events-auto]="isOpen()"
@@ -9,39 +9,41 @@
 </div>
 
 <aside
-  class="fixed top-0 left-0 w-60 h-full bg-slate-900 flex flex-col z-40 transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 md:flex-shrink-0"
+  class="fixed top-0 left-0 w-64 h-full flex flex-col z-40 transition-transform duration-300 ease-out md:sticky md:top-0 md:h-screen md:translate-x-0 md:flex-shrink-0 text-white
+         bg-gradient-to-b from-ink-900 via-ink-900 to-ink-800 border-r border-white/5"
   [class.translate-x-0]="isOpen()"
   [class.-translate-x-full]="!isOpen()">
 
   <!-- Marca -->
-  <div class="h-16 flex items-center justify-between px-5 border-b border-white/10">
+  <div class="h-[84px] pt-2 flex items-center justify-between px-5">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">M</div>
+      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-mint-300 to-emerald-600 text-ink-950 flex items-center justify-center text-[17px] font-extrabold shadow-[0_6px_20px_-4px_rgb(63_217_184_/_0.55)]">M</div>
       <div class="leading-tight">
-        <p class="text-[15px] font-semibold text-white">MiXCo</p>
-        <p class="text-[11px] text-slate-400">Gestora de patrimônio</p>
+        <p class="text-[17px] font-semibold tracking-tight">MiX<span class="text-mint-400">Co</span></p>
+        <p class="text-[11px] text-white/40">Gestora de patrimônio</p>
       </div>
     </div>
-    <button (click)="closeSidebar()" class="md:hidden p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/10" aria-label="Fechar menu">
+    <button (click)="closeSidebar()" class="md:hidden p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10" aria-label="Fechar menu">
       <lucide-icon [img]="icons.x" [size]="20"></lucide-icon>
     </button>
   </div>
 
   <!-- Navegação agrupada -->
-  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+  <nav class="flex-1 overflow-y-auto px-3 pb-4 space-y-6">
     @for (group of navGroups; track group.label) {
       <div>
-        <p class="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">{{ group.label }}</p>
+        <p class="px-3 mb-2 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/30">{{ group.label }}</p>
         <div class="space-y-0.5">
           @for (item of group.items; track item.path) {
             <a
               [routerLink]="['/', item.path]"
-              routerLinkActive="bg-white/10 text-white"
+              routerLinkActive="!bg-white/10 !text-white [&_.nav-bar]:opacity-100 [&_lucide-icon]:text-mint-400"
               [routerLinkActiveOptions]="{ exact: item.path === 'painel-principal' || item.path === 'mixco' }"
               (click)="closeSidebar()"
-              class="flex items-center gap-3 px-3 py-2 rounded text-[13.5px] text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+              class="group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors"
             >
-              <lucide-icon [img]="item.icon" [size]="17" [strokeWidth]="1.75"></lucide-icon>
+              <span class="nav-bar absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-mint-400 opacity-0 transition-opacity"></span>
+              <lucide-icon [img]="item.icon" [size]="18" [strokeWidth]="1.75" class="transition-colors"></lucide-icon>
               <span>{{ item.label }}</span>
             </a>
           }
@@ -51,12 +53,12 @@
   </nav>
 
   <!-- Usuário -->
-  <div class="px-4 py-3 border-t border-white/10 flex items-center gap-3">
-    <div class="w-8 h-8 rounded-full bg-slate-700 text-slate-200 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+  <div class="m-3 px-3 py-3 rounded-2xl bg-white/5 ring-1 ring-white/5 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-ink-700 to-emerald-600 text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
       {{ userName().charAt(0).toUpperCase() }}
     </div>
-    <p class="flex-1 min-w-0 text-[13px] font-medium text-slate-200 truncate" [title]="userName()">{{ userName() }}</p>
-    <button type="button" (click)="logout()" class="p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/10" title="Sair" aria-label="Sair">
+    <p class="flex-1 min-w-0 text-[13px] font-medium text-white/90 truncate" [title]="userName()">{{ userName() }}</p>
+    <button type="button" (click)="logout()" class="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10" title="Sair" aria-label="Sair">
       <lucide-icon [img]="icons.logOut" [size]="17"></lucide-icon>
     </button>
   </div>
