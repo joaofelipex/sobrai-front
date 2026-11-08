@@ -120,6 +120,19 @@ Detalhes no [repositório da API](https://github.com/joaofelipex/sobrai-back).
 
 O app sincroniza sozinho ao abrir quando passou de 6 h. As credenciais ficam só no servidor. O widget é carregado de `pluggyConnectScript` em `src/environments/environment.ts`: confira a versão atual na documentação da Pluggy.
 
+## ⚡ Início rápido (um comando)
+
+Clone os dois repositórios **lado a lado** e rode, dentro de `sobrai-front`:
+
+```bash
+git clone -b claude/mixco-personal-finance-nfby39 https://github.com/joaofelipex/sobrai-back
+git clone -b claude/mixco-personal-finance-nfby39 https://github.com/joaofelipex/sobrai-front
+cd sobrai-front
+npm run mixco
+```
+
+Instala as dependências na primeira vez, sobe a API (3001) e o app (3000) juntos e mostra também o endereço para abrir no celular. `Ctrl+C` para tudo. Se a API estiver em outra pasta: `BACK_DIR=/caminho/sobrai-back npm run mixco`.
+
 ## 🚀 Como rodar
 
 > **Pré-requisitos:** Node.js 20.12 ou superior e a [API do Sobrai](https://github.com/joaofelipex/sobrai-back) rodando na porta 3001.
